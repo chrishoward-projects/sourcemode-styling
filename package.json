@@ -1,6 +1,6 @@
 {
 	"name": "sourcemode-styling",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Plugin to style source mode",
 	"main": "main.js",
 	"scripts": {
