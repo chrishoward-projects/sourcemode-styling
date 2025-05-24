@@ -1,0 +1,11 @@
+{
+	"id": "sourcemode-styling",
+	"name": "Source mode styling",
+	"version": "0.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "Style source mode",
+	"author": "Chris Howard",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
