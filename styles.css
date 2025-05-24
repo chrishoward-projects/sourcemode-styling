@@ -8,8 +8,8 @@ If your plugin does not need CSS, delete this file.
 */
 
 .obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
-  font-family: 'Source Code Pro', monospace;
-  font-size:14px;
+  font-family: var(--sourcemode-font-family);
+  font-size: var(--sourcemode-font-size);
 }
 
 .obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
@@ -22,7 +22,7 @@ If your plugin does not need CSS, delete this file.
   font-weight: bold;
   text-decoration: none;
   text-transform: unset;
-  font-family: 'Source Code Pro', monospace;
+  font-family: var(--sourcemode-font-family);
   font-variant:initial;
 }
 
