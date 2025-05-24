@@ -76,6 +76,33 @@ export default class SourceModeStyling extends Plugin {
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+
+		// === Add mode class logic ===
+		const updateBodyModeClass = () => {
+			const body = document.body;
+			const modeClasses = [
+				"obsidian-mode-source",
+				"obsidian-mode-live",
+				"obsidian-mode-preview"
+			];
+			// Remove all mode classes first
+			body.classList.remove(...modeClasses);
+
+			const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+			if (view) {
+				const mode = view.getMode && view.getMode();
+				if (mode && ["source", "live", "preview"].includes(mode)) {
+					body.classList.add(`obsidian-mode-${mode}`);
+				}
+			}
+		};
+
+		// Listen for both active-leaf-change and layout-change
+		this.registerEvent(this.app.workspace.on("active-leaf-change", updateBodyModeClass));
+		this.registerEvent(this.app.workspace.on("layout-change", updateBodyModeClass));
+
+		// Set initial mode class
+		updateBodyModeClass();
 	}
 
 	onunload() {
