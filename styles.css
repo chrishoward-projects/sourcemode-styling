@@ -6,3 +6,23 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
+  font-family: 'Source Code Pro', monospace;
+  font-size:14px;
+}
+
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-2,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-3,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-4,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-5,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-6 {
+  font-size: initial!important;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: unset;
+  font-family: 'Source Code Pro', monospace;
+  font-variant:initial;
+}
+
