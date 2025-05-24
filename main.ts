@@ -6,6 +6,7 @@ interface SourceModeStylingSettings {
 	rawModeEnabled: boolean;
 	fontFamily: string;
 	fontSize: number;
+	lineHeight: number;
 }
 
 const MONOSPACE_FONTS = [
@@ -19,10 +20,64 @@ const MONOSPACE_FONTS = [
 	"monospace"
 ];
 
+// Add font detection function
+function detectAvailableFonts(fontList: string[]): string[] {
+	const baseFonts = ['monospace', 'sans-serif', 'serif'];
+	const testString = "mmmmmmmmmmlli";
+	const testSize = "72px";
+	
+	// Create test element
+	const testElement = document.createElement('span');
+	testElement.style.fontSize = testSize;
+	testElement.style.position = 'absolute';
+	testElement.style.left = '-99999px';
+	testElement.textContent = testString;
+	document.body.appendChild(testElement);
+	
+	// Get baseline measurements
+	const baselines: {[key: string]: {width: number, height: number}} = {};
+	baseFonts.forEach(baseFont => {
+		testElement.style.fontFamily = baseFont;
+		baselines[baseFont] = {
+			width: testElement.offsetWidth,
+			height: testElement.offsetHeight
+		};
+	});
+	
+	// Test each font
+	const availableFonts: string[] = [];
+	fontList.forEach(font => {
+		let isAvailable = false;
+		baseFonts.forEach(baseFont => {
+			testElement.style.fontFamily = `"${font}", ${baseFont}`;
+			const dimensions = {
+				width: testElement.offsetWidth,
+				height: testElement.offsetHeight
+			};
+			
+			// If dimensions changed, the font is available
+			if (dimensions.width !== baselines[baseFont].width || 
+				dimensions.height !== baselines[baseFont].height) {
+				isAvailable = true;
+			}
+		});
+		
+		if (isAvailable || font === 'monospace') {
+			availableFonts.push(font);
+		}
+	});
+	
+	// Clean up
+	document.body.removeChild(testElement);
+	
+	return availableFonts;
+}
+
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	rawModeEnabled: true,
 	fontFamily: "Source Code Pro",
-	fontSize: 14
+	fontSize: 14,
+	lineHeight: 1.75
 }
 
 export default class SourceModeStyling extends Plugin {
@@ -44,11 +99,12 @@ export default class SourceModeStyling extends Plugin {
 				styleEl.id = "sourcemode-styling-font-style";
 				document.head.appendChild(styleEl);
 			}
-			const { fontFamily, fontSize } = this.settings;
+			const { fontFamily, fontSize, lineHeight } = this.settings;
 			styleEl.textContent = `
 				body.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
 					--sourcemode-font-family: '${fontFamily}', monospace;
 					--sourcemode-font-size: ${fontSize}px;
+					--sourcemode-line-height: ${lineHeight};
 				}
 			`;
 		};
@@ -62,12 +118,8 @@ export default class SourceModeStyling extends Plugin {
 			body.classList.remove(...modeClasses);
 
 			const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (view) {
-				console.log("Raw mode enable",this.settings.rawModeEnabled);
-				console.log(view.getState());
-				if (view.getState().source === true && view.getState().mode === "source") {
-						body.classList.add(`obsidian-mode-raw`);
-				}
+			if (view && view.getState().source === true && view.getState().mode === "source") {
+					body.classList.add(`obsidian-mode-raw`);
 			}
 			updateInjectedStyle();
 		};
@@ -135,12 +187,19 @@ class SourceModeStylingSettingTab extends PluginSettingTab {
 					this.plugin.app.workspace.trigger('layout-change');
 				}));
 
+		// Detect available fonts
+		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS);
+
 		new Setting(containerEl)
 			.setName('Monospace font')
-			.setDesc('Select the monospace font for source/raw mode')
+			.setDesc(`Select the monospace font for source/raw mode (${availableFonts.length} available)`)
 			.addDropdown(drop => {
-				MONOSPACE_FONTS.forEach(font => drop.addOption(font, font));
-				drop.setValue(this.plugin.settings.fontFamily);
+				availableFonts.forEach(font => drop.addOption(font, font));
+				// Make sure current setting is available, fallback to first available font
+				const currentFont = availableFonts.includes(this.plugin.settings.fontFamily) 
+					? this.plugin.settings.fontFamily 
+					: availableFonts[0];
+				drop.setValue(currentFont);
 				drop.onChange(async (value) => {
 					this.plugin.settings.fontFamily = value;
 					await this.plugin.saveSettings();
@@ -160,6 +219,25 @@ class SourceModeStylingSettingTab extends PluginSettingTab {
 					const num = parseInt(value);
 					if (!isNaN(num) && num >= 9 && num <= 20) {
 						this.plugin.settings.fontSize = num;
+						await this.plugin.saveSettings();
+						this.plugin.app.workspace.trigger('layout-change');
+					}
+				});
+			});
+
+		new Setting(containerEl)
+			.setName('Line height')
+			.setDesc('Set the line height for source/raw mode (e.g. 1.0–2.5)')
+			.addText(text => {
+				text.inputEl.type = 'number';
+				text.inputEl.min = '1.0';
+				text.inputEl.max = '2.5';
+				text.inputEl.step = '0.05';
+				text.setValue(this.plugin.settings.lineHeight.toString());
+				text.onChange(async (value) => {
+					const num = parseFloat(value);
+					if (!isNaN(num) && num >= 1.0 && num <= 2.5) {
+						this.plugin.settings.lineHeight = num;
 						await this.plugin.saveSettings();
 						this.plugin.app.workspace.trigger('layout-change');
 					}

@@ -11,6 +11,9 @@ If your plugin does not need CSS, delete this file.
   font-family: var(--sourcemode-font-family);
   font-size: var(--sourcemode-font-size);
 }
+.obsidian-mode-raw .markdown-source-view.mod-cm6:not(.is-live-preview) .cm-scroller{
+  line-height: var(--sourcemode-line-height);
+}
 
 .obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
 .obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-2,
@@ -24,5 +27,6 @@ If your plugin does not need CSS, delete this file.
   text-transform: unset;
   font-family: var(--sourcemode-font-family);
   font-variant:initial;
+  line-height: var(--sourcemode-line-height);
 }
 
