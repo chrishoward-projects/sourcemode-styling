@@ -23,9 +23,7 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 			.addToggle(text => text
 				.setValue(this.plugin.settings.rawModeEnabled)
 				.onChange(async (value) => {
-					this.plugin.settings.rawModeEnabled = value;
-					await this.plugin.saveSettings();
-					this.plugin.app.workspace.trigger('layout-change');
+					await this.plugin.toggleStyling(value);
 				}));
 
 		// Detect available fonts
@@ -41,77 +39,132 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		];
 		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS);
 
-		new Setting(containerEl)
+		// Monospace font setting with theme default option
+		const fontSetting = new Setting(containerEl)
 			.setName('Monospace font')
-			.setDesc(`Select the monospace font for source/raw mode (${availableFonts.length} available)`)
-			.addDropdown(drop => {
-				availableFonts.forEach(font => drop.addOption(font, font));
-				// Make sure current setting is available, fallback to first available font
-				const currentFont = availableFonts.includes(this.plugin.settings.fontFamily) 
-					? this.plugin.settings.fontFamily 
-					: availableFonts[0];
-				drop.setValue(currentFont);
-				drop.onChange(async (value) => {
-					this.plugin.settings.fontFamily = value;
-					await this.plugin.saveSettings();
-					this.plugin.app.workspace.trigger('layout-change');
-				});
-			});
+			.setDesc('Select a monospace font for source mode');
+		const fontModeSelect = document.createElement('select');
+		fontModeSelect.innerHTML = `<option value="theme">Theme default</option>` + availableFonts.map(font => `<option value="${font}">${font}</option>`).join('');
+		fontModeSelect.value = this.plugin.settings.fontFamily && this.plugin.settings.fontFamily !== 'theme' ? this.plugin.settings.fontFamily : 'theme';
+		fontSetting.controlEl.appendChild(fontModeSelect);
+		fontModeSelect.addEventListener('change', async () => {
+			this.plugin.settings.fontFamily = fontModeSelect.value;
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
 
-		new Setting(containerEl)
+		// Font size setting with theme default option
+		const fontSizeSetting = new Setting(containerEl)
 			.setName('Font size')
-			.setDesc('Set the font size for source/raw mode (px)')
-			.addText(text => {
-				text.inputEl.type = 'number';
-				text.inputEl.min = '9';
-				text.inputEl.max = '20';
-				text.setValue(this.plugin.settings.fontSize.toString());
-				text.onChange(async (value) => {
-					const num = parseInt(value);
-					if (!isNaN(num) && num >= 9 && num <= 20) {
-						this.plugin.settings.fontSize = num;
-						await this.plugin.saveSettings();
-						this.plugin.app.workspace.trigger('layout-change');
-					}
-				});
-			});
+			.setDesc('Set the font size for source mode (px)');
+		const fontSizeModeSelect = document.createElement('select');
+		fontSizeModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
+		const isFontSizeCustom = typeof this.plugin.settings.fontSize === 'number';
+		fontSizeModeSelect.value = isFontSizeCustom ? 'custom' : 'theme';
+		fontSizeSetting.controlEl.appendChild(fontSizeModeSelect);
+		const fontSizeInput = document.createElement('input');
+		fontSizeInput.type = 'number';
+		fontSizeInput.min = '9';
+		fontSizeInput.max = '20';
+		fontSizeInput.value = isFontSizeCustom ? this.plugin.settings.fontSize.toString() : '14';
+		if (!isFontSizeCustom) fontSizeInput.style.display = 'none';
+		fontSizeSetting.controlEl.appendChild(fontSizeInput);
+		fontSizeModeSelect.addEventListener('change', async () => {
+			if (fontSizeModeSelect.value === 'custom') {
+				fontSizeInput.style.display = '';
+				const num = parseInt(fontSizeInput.value);
+				if (!isNaN(num)) this.plugin.settings.fontSize = num;
+			} else {
+				fontSizeInput.style.display = 'none';
+				(this.plugin.settings as any).fontSize = 'theme';
+			}
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
+		fontSizeInput.addEventListener('input', async () => {
+			if (fontSizeModeSelect.value === 'custom') {
+				const num = parseInt(fontSizeInput.value);
+				if (!isNaN(num)) this.plugin.settings.fontSize = num;
+				await this.plugin.saveSettings();
+				this.plugin.app.workspace.trigger('layout-change');
+			}
+		});
 
-		new Setting(containerEl)
+		// Line height setting with theme default option
+		const lineHeightSetting = new Setting(containerEl)
 			.setName('Line height')
-			.setDesc('Set the line height for source/raw mode (e.g. 1.0–2.5)')
-			.addText(text => {
-				text.inputEl.type = 'number';
-				text.inputEl.min = '1.0';
-				text.inputEl.max = '2.5';
-				text.inputEl.step = '0.05';
-				text.setValue(this.plugin.settings.lineHeight.toString());
-				text.onChange(async (value) => {
-					const num = parseFloat(value);
-					if (!isNaN(num) && num >= 1.0 && num <= 2.5) {
-						this.plugin.settings.lineHeight = num;
-						await this.plugin.saveSettings();
-						this.plugin.app.workspace.trigger('layout-change');
-					}
-				});
-			});
+			.setDesc('Set the line height for source mode (e.g. 1.0–2.5)');
+		const lineHeightModeSelect = document.createElement('select');
+		lineHeightModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
+		const isLineHeightCustom = typeof this.plugin.settings.lineHeight === 'number';
+		lineHeightModeSelect.value = isLineHeightCustom ? 'custom' : 'theme';
+		lineHeightSetting.controlEl.appendChild(lineHeightModeSelect);
+		const lineHeightInput = document.createElement('input');
+		lineHeightInput.type = 'number';
+		lineHeightInput.min = '1.0';
+		lineHeightInput.max = '2.5';
+		lineHeightInput.step = '0.05';
+		lineHeightInput.value = isLineHeightCustom ? this.plugin.settings.lineHeight.toString() : '1.75';
+		if (!isLineHeightCustom) lineHeightInput.style.display = 'none';
+		lineHeightSetting.controlEl.appendChild(lineHeightInput);
+		lineHeightModeSelect.addEventListener('change', async () => {
+			if (lineHeightModeSelect.value === 'custom') {
+				lineHeightInput.style.display = '';
+				const num = parseFloat(lineHeightInput.value);
+				if (!isNaN(num)) this.plugin.settings.lineHeight = num;
+			} else {
+				lineHeightInput.style.display = 'none';
+				(this.plugin.settings as any).lineHeight = 'theme';
+			}
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
+		lineHeightInput.addEventListener('input', async () => {
+			if (lineHeightModeSelect.value === 'custom') {
+				const num = parseFloat(lineHeightInput.value);
+				if (!isNaN(num)) this.plugin.settings.lineHeight = num;
+				await this.plugin.saveSettings();
+				this.plugin.app.workspace.trigger('layout-change');
+			}
+		});
 
-		new Setting(containerEl)
+		// Heading color setting with theme default option
+		const headingColorSetting = new Setting(containerEl)
 			.setName('Heading color')
-			.setDesc('Set the color for headings in source/raw mode')
-			.addText(text => {
-				text.inputEl.type = 'color';
-				text.setValue(this.plugin.settings.headingColor || '#222222');
-				text.onChange(async (value) => {
-					this.plugin.settings.headingColor = value;
-					await this.plugin.saveSettings();
-					this.plugin.app.workspace.trigger('layout-change');
-				});
-			});
+			.setDesc('Set the color for headings in source mode');
+		const headingColorModeSelect = document.createElement('select');
+		headingColorModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
+		const isHeadingColorCustom = this.plugin.settings.headingColor && this.plugin.settings.headingColor !== 'theme';
+		headingColorModeSelect.value = isHeadingColorCustom ? 'custom' : 'theme';
+		headingColorSetting.controlEl.appendChild(headingColorModeSelect);
+		const headingColorInput = document.createElement('input');
+		headingColorInput.type = 'color';
+		headingColorInput.value = isHeadingColorCustom ? this.plugin.settings.headingColor : '#2d5b8c';
+		if (!isHeadingColorCustom) headingColorInput.style.display = 'none';
+		headingColorSetting.controlEl.appendChild(headingColorInput);
+		headingColorModeSelect.addEventListener('change', async () => {
+			if (headingColorModeSelect.value === 'custom') {
+				headingColorInput.style.display = '';
+				this.plugin.settings.headingColor = headingColorInput.value;
+			} else {
+				headingColorInput.style.display = 'none';
+				this.plugin.settings.headingColor = 'theme';
+			}
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
+		headingColorInput.addEventListener('input', async () => {
+			if (headingColorModeSelect.value === 'custom') {
+				this.plugin.settings.headingColor = headingColorInput.value;
+				await this.plugin.saveSettings();
+				this.plugin.app.workspace.trigger('layout-change');
+			}
+		});
 
 		// Background color setting with theme default option
 		const bgSetting = new Setting(containerEl)
 			.setName('Background color')
-			.setDesc('Set the background color for source/raw mode');
+			.setDesc('Set the background color for source mode');
 
 		const bgModeSelect = document.createElement('select');
 		bgModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;

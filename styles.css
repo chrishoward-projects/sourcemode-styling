@@ -6,5 +6,29 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+/* 
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
+  font-family: var(--sourcemode-font-family);
+  font-size: var(--sourcemode-font-size);
+  background-color: var(--sourcemode-background-color);
+}
+.obsidian-mode-raw .markdown-source-view.mod-cm6:not(.is-live-preview) .cm-scroller{
+  line-height: var(--sourcemode-line-height);
+}
 
-
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-2,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-3,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-4,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-5,
+.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-6 {
+  font-size: initial!important;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: unset;
+  font-family: var(--sourcemode-font-family);
+  font-variant:initial;
+  line-height: var(--sourcemode-line-height);
+  color: var(--sourcemode-heading-color);
+}
+ */
