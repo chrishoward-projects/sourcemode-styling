@@ -32,3 +32,21 @@ If your plugin does not need CSS, delete this file.
   color: var(--sourcemode-heading-color);
 }
  */
+
+ .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+   font-size: initial!important;
+   font-weight: bold;
+   text-decoration: none;
+   text-transform: unset;
+   font-variant:initial;
+ }
+
+ .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
+  color:var(--text-formatting);
+ }
+
+ .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller .cm-line {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+ }
+ 

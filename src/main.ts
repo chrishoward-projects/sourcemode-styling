@@ -1,7 +1,6 @@
 import { MarkdownView,  Plugin, EventRef } from 'obsidian';
 import { SourceModeStylingSettingTab } from './settingsTab';
 
-// Remember to rename these classes and interfaces!
 
 interface SourceModeStylingSettings {
 	rawModeEnabled: boolean;
@@ -12,7 +11,6 @@ interface SourceModeStylingSettings {
 	backgroundColor: string;
 	fontWeight?: string | number;
 }
-
 
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	rawModeEnabled: true,
@@ -85,19 +83,11 @@ export default class SourceModeStyling extends Plugin {
 					${lineHeightVar}
 				}
 				
-			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header,
-				.obsidian-mode-raw .view-content .markdown-source-view .cm-header {
-					font-size: initial!important;
-					font-weight: bold;
-					text-decoration: none;
-					text-transform: unset;
+			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
 					${fontFamilyVar}
-					font-variant:initial;
 					${lineHeightVar}
 					${headingColorVar}
 					${fontWeightVar}
-					margin-top: 0.25em;
-					margin-bottom: 0.25em;
 				}
 				
 				
