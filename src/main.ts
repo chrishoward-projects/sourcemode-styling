@@ -66,16 +66,17 @@ export default class SourceModeStyling extends Plugin {
 			let fontSizeVar = typeof fontSize === 'number' ? `font-size: ${fontSize}px;` : '';
 			let lineHeightVar = typeof lineHeight === 'number' ? `line-height: ${lineHeight};` : '';
 			styleEl.textContent = `
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
+			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
 					${fontFamilyVar}
 					${fontSizeVar}
 					${backgroundColorVar}
 				}
-				.obsidian-mode-raw .markdown-source-view.mod-cm6:not(.is-live-preview) .cm-scroller{
+				.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller{
 					${lineHeightVar}
 				}
 				
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header {
+			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header,
+				.obsidian-mode-raw .view-content .markdown-source-view .cm-header {
 					font-size: initial!important;
 					font-weight: bold;
 					text-decoration: none;

@@ -49,6 +49,8 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 			"Envy Code R",
 			"Fira Mono",
 			"Fira Code",
+			"Hack",
+			"IBM Plex Mono",
 			"Inconsolata",
 			"JetBrains Mono",
 			"Liberation Mono",
@@ -60,10 +62,12 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 			"Noto Mono",
 			"Operator Mono",
 			"Pragmata Pro",
+			"Red Hat Mono",
 			"Roboto Mono",
 			"Source Code Pro",
 			"Space Mono",
 			"Ubuntu Mono",
+			"Ubuntu Sans Mono",
 			"VT323",
 			"monospace"
 		];
