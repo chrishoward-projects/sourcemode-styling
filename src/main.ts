@@ -10,6 +10,7 @@ interface SourceModeStylingSettings {
 	lineHeight: number;
 	headingColor: string;
 	backgroundColor: string;
+	fontWeight?: string | number;
 }
 
 
@@ -19,7 +20,8 @@ const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	fontSize: 14,
 	lineHeight: 1.75,
 	headingColor: "#2d5b8c",
-	backgroundColor: "theme"
+	backgroundColor: "theme",
+	fontWeight: "theme"
 }
 
 export default class SourceModeStyling extends Plugin {
@@ -59,17 +61,25 @@ export default class SourceModeStyling extends Plugin {
 				styleEl.id = "sourcemode-styling-font-style";
 				document.head.appendChild(styleEl);
 			}
-			const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor } = this.settings;
+			const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor, fontWeight } = this.settings;
 			let backgroundColorVar = backgroundColor && backgroundColor !== 'theme' ? `background-color: ${backgroundColor};` : '';
 			let headingColorVar = headingColor && headingColor !== 'theme' ? `color: ${headingColor};` : '';
 			let fontFamilyVar = fontFamily && fontFamily !== 'theme' ? `font-family: '${fontFamily}', monospace;` : '';
 			let fontSizeVar = typeof fontSize === 'number' ? `font-size: ${fontSize}px;` : '';
 			let lineHeightVar = typeof lineHeight === 'number' ? `line-height: ${lineHeight};` : '';
+			let fontWeightVar = '';
+			if (fontWeight && fontWeight !== 'theme') {
+				if (fontWeight === 'normal') fontWeightVar = 'font-weight: 400;';
+				else if (fontWeight === 'light') fontWeightVar = 'font-weight: 300;';
+				else if (fontWeight === 'semibold') fontWeightVar = 'font-weight: 600;';
+				else fontWeightVar = `font-weight: ${fontWeight};`;
+			}
 			styleEl.textContent = `
 			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
 					${fontFamilyVar}
 					${fontSizeVar}
 					${backgroundColorVar}
+					${fontWeightVar}
 				}
 				.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller{
 					${lineHeightVar}
@@ -85,6 +95,7 @@ export default class SourceModeStyling extends Plugin {
 					font-variant:initial;
 					${lineHeightVar}
 					${headingColorVar}
+					${fontWeightVar}
 					margin-top: 0.25em;
 					margin-bottom: 0.25em;
 				}

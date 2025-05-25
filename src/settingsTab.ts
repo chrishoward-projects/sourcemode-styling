@@ -231,5 +231,56 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 				this.plugin.app.workspace.trigger('layout-change');
 			}
 		});
+
+		// Font weight setting with theme default option
+		const fontWeightSetting = new Setting(containerEl)
+			.setName('Font weight')
+			.setDesc('Set the font weight for source/raw mode');
+		const fontWeightModeSelect = document.createElement('select');
+		fontWeightModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="normal">Normal</option><option value="light">Light</option><option value="semibold">Semi-bold</option><option value="custom">Custom</option>`;
+		const isFontWeightCustom = typeof this.plugin.settings.fontWeight === 'number';
+		fontWeightModeSelect.value = isFontWeightCustom
+			? 'custom'
+			: (this.plugin.settings.fontWeight === 'light'
+				? 'light'
+				: (this.plugin.settings.fontWeight === 'semibold'
+					? 'semibold'
+					: (this.plugin.settings.fontWeight === 'normal' ? 'normal' : 'theme')));
+		fontWeightSetting.controlEl.appendChild(fontWeightModeSelect);
+		const fontWeightInput = document.createElement('input');
+		fontWeightInput.type = 'number';
+		fontWeightInput.min = '100';
+		fontWeightInput.max = '900';
+		fontWeightInput.step = '100';
+		fontWeightInput.value = isFontWeightCustom ? this.plugin.settings.fontWeight?.toString() ?? '400' : '400';
+		if (!isFontWeightCustom) fontWeightInput.style.display = 'none';
+		fontWeightSetting.controlEl.appendChild(fontWeightInput);
+		fontWeightModeSelect.addEventListener('change', async () => {
+			if (fontWeightModeSelect.value === 'custom') {
+				fontWeightInput.style.display = '';
+				const num = parseInt(fontWeightInput.value);
+				if (!isNaN(num)) this.plugin.settings.fontWeight = num;
+			} else {
+				fontWeightInput.style.display = 'none';
+				if (
+					fontWeightModeSelect.value === 'normal' ||
+					fontWeightModeSelect.value === 'light' ||
+					fontWeightModeSelect.value === 'semibold' ||
+					fontWeightModeSelect.value === 'theme'
+				) {
+					this.plugin.settings.fontWeight = fontWeightModeSelect.value;
+				}
+			}
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
+		fontWeightInput.addEventListener('input', async () => {
+			if (fontWeightModeSelect.value === 'custom') {
+				const num = parseInt(fontWeightInput.value);
+				if (!isNaN(num)) this.plugin.settings.fontWeight = num;
+				await this.plugin.saveSettings();
+				this.plugin.app.workspace.trigger('layout-change');
+			}
+		});
 	}
 } 
