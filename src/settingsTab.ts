@@ -28,13 +28,43 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 
 		// Detect available fonts
 		const MONOSPACE_FONTS = [
-			"Consolas",
+			"Andale Mono",
+			"Anonymous Pro",
+			"Bitstream Vera Sans Mono",
+			"Code New Roman",
+			"Cascadia Code",
+			"Cascadia Mono",
+			"Cascadia Mono PL",
 			"Courier New",
+			"Courier Prime",
+			"Courier Prime Code",
+			"Courier Prime Mono",
+			"Courier Prime Sans",
+			"Courier Prime Sans Mono",
+			"Courier Prime Serif",
+			"Courier Prime Serif Mono",
+			"Consolas",
+			"DejaVu Sans Mono",
+			"Droid Sans Mono",
+			"Envy Code R",
 			"Fira Mono",
+			"Fira Code",
+			"Inconsolata",
 			"JetBrains Mono",
+			"Liberation Mono",
 			"Menlo",
+			"Meslo LG S",
+			"Meslo LG M",
+			"Meslo LG L",
 			"Monaco",
+			"Noto Mono",
+			"Operator Mono",
+			"Pragmata Pro",
+			"Roboto Mono",
 			"Source Code Pro",
+			"Space Mono",
+			"Ubuntu Mono",
+			"VT323",
 			"monospace"
 		];
 		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS);
@@ -44,7 +74,7 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 			.setName('Monospace font')
 			.setDesc('Select a monospace font for source mode');
 		const fontModeSelect = document.createElement('select');
-		fontModeSelect.innerHTML = `<option value="theme">Theme default</option>` + availableFonts.map(font => `<option value="${font}">${font}</option>`).join('');
+		fontModeSelect.innerHTML = `<option value="theme">Use theme font</option>` + availableFonts.map(font => `<option value="${font}">${font}</option>`).join('');
 		fontModeSelect.value = this.plugin.settings.fontFamily && this.plugin.settings.fontFamily !== 'theme' ? this.plugin.settings.fontFamily : 'theme';
 		fontSetting.controlEl.appendChild(fontModeSelect);
 		fontModeSelect.addEventListener('change', async () => {

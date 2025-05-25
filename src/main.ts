@@ -1,5 +1,4 @@
-import { App, Editor, MarkdownView, MarkdownSubView, Modal, Notice, Plugin, PluginSettingTab, Setting, EventRef } from 'obsidian';
-import { detectAvailableFonts } from './fontDetect';
+import { MarkdownView,  Plugin, EventRef } from 'obsidian';
 import { SourceModeStylingSettingTab } from './settingsTab';
 
 // Remember to rename these classes and interfaces!
@@ -13,16 +12,6 @@ interface SourceModeStylingSettings {
 	backgroundColor: string;
 }
 
-const MONOSPACE_FONTS = [
-	"Consolas",
-	"Courier New",
-	"Fira Mono",
-	"JetBrains Mono",
-	"Menlo",
-	"Monaco",
-	"Source Code Pro",
-	"monospace"
-];
 
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	rawModeEnabled: true,
@@ -86,12 +75,7 @@ export default class SourceModeStyling extends Plugin {
 					${lineHeightVar}
 				}
 				
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-2,
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-3,
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-4,
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-5,
-				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-6 {
+				.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header {
 					font-size: initial!important;
 					font-weight: bold;
 					text-decoration: none;
@@ -100,6 +84,8 @@ export default class SourceModeStyling extends Plugin {
 					font-variant:initial;
 					${lineHeightVar}
 					${headingColorVar}
+					margin-top: 0.25em;
+					margin-bottom: 0.25em;
 				}
 				
 				
