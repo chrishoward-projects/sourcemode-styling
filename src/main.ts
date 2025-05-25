@@ -30,7 +30,7 @@ const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	fontSize: 14,
 	lineHeight: 1.75,
 	headingColor: "#2d5b8c",
-	backgroundColor: "#fbfaf6"
+	backgroundColor: "theme"
 }
 
 export default class SourceModeStyling extends Plugin {
@@ -56,14 +56,40 @@ export default class SourceModeStyling extends Plugin {
 					document.head.appendChild(styleEl);
 				}
 				const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor } = this.settings;
+				let bgVar = backgroundColor && backgroundColor !== 'theme' ? `--sourcemode-background-color: ${backgroundColor};` : '';
 				styleEl.textContent = `
 					body.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
 						--sourcemode-font-family: '${fontFamily}', monospace;
 						--sourcemode-font-size: ${fontSize}px;
 						--sourcemode-line-height: ${lineHeight};
 						--sourcemode-heading-color: ${headingColor};
-						--sourcemode-background-color: ${backgroundColor};
+						${bgVar}
 					}
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
+						font-family: var(--sourcemode-font-family);
+						font-size: var(--sourcemode-font-size);
+						background-color: var(--sourcemode-background-color, #fbfaf6);
+					}
+					.obsidian-mode-raw .markdown-source-view.mod-cm6:not(.is-live-preview) .cm-scroller{
+						line-height: var(--sourcemode-line-height);
+					}
+
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-1,
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-2,
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-3,
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-4,
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-5,
+					.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview) .cm-header-6 {
+						font-size: initial!important;
+						font-weight: bold;
+						text-decoration: none;
+						text-transform: unset;
+						font-family: var(--sourcemode-font-family);
+						font-variant:initial;
+						line-height: var(--sourcemode-line-height);
+						color: var(--sourcemode-heading-color, #222222);
+					}
+
 				`;
 			};
 
