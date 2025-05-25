@@ -108,17 +108,41 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 				});
 			});
 
-		new Setting(containerEl)
+		// Background color setting with theme default option
+		const bgSetting = new Setting(containerEl)
 			.setName('Background color')
-			.setDesc('Set the background color for source/raw mode')
-			.addText(text => {
-				text.inputEl.type = 'color';
-				text.setValue(this.plugin.settings.backgroundColor || '#fbfaf6');
-				text.onChange(async (value) => {
-					this.plugin.settings.backgroundColor = value;
-					await this.plugin.saveSettings();
-					this.plugin.app.workspace.trigger('layout-change');
-				});
-			});
+			.setDesc('Set the background color for source/raw mode');
+
+		const bgModeSelect = document.createElement('select');
+		bgModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
+		const isCustom = this.plugin.settings.backgroundColor && this.plugin.settings.backgroundColor !== 'theme';
+		bgModeSelect.value = isCustom ? 'custom' : 'theme';
+		bgSetting.controlEl.appendChild(bgModeSelect);
+
+		const colorInput = document.createElement('input');
+		colorInput.type = 'color';
+		colorInput.value = isCustom ? this.plugin.settings.backgroundColor : '#fbfaf6';
+		if (!isCustom) colorInput.style.display = 'none';
+		bgSetting.controlEl.appendChild(colorInput);
+
+		bgModeSelect.addEventListener('change', async (e) => {
+			if (bgModeSelect.value === 'custom') {
+				colorInput.style.display = '';
+				this.plugin.settings.backgroundColor = colorInput.value;
+			} else {
+				colorInput.style.display = 'none';
+				this.plugin.settings.backgroundColor = 'theme';
+			}
+			await this.plugin.saveSettings();
+			this.plugin.app.workspace.trigger('layout-change');
+		});
+
+		colorInput.addEventListener('input', async (e) => {
+			if (bgModeSelect.value === 'custom') {
+				this.plugin.settings.backgroundColor = colorInput.value;
+				await this.plugin.saveSettings();
+				this.plugin.app.workspace.trigger('layout-change');
+			}
+		});
 	}
 } 
