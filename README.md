@@ -1,94 +1,69 @@
-# Obsidian Sample Plugin
+# Source Mode Styling for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Source Mode Styling is an Obsidian plugin that lets you customize the appearance of the source/raw mode editor. You can choose your preferred monospace font, font size, and line height for editing markdown in source mode, making your editing experience more comfortable and visually appealing.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Features
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- **Custom Font Family:** Select from available monospace fonts for source mode.
+- **Adjust Font Size:** Set the font size (in px) for source mode.
+- **Set Line Height:** Choose your preferred line height for better readability.
+- **Enable/Disable Styling:** Toggle source mode styling on or off from the settings tab.
+- **Applies Only to Source Mode:** Styles are applied only when editing in source/raw mode (not live preview).
 
-## First time developing plugins?
+## Installation
 
-Quick starting guide for new plugin devs:
+### Automatic (Recommended for Developers)
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+1. Clone this repository into your Obsidian vault's plugins folder:
+   ```sh
+   git clone <this-repo-url> .obsidian/plugins/sourcemode-styling
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Build the plugin in watch mode:
+   ```sh
+   npm run dev
+   ```
+4. Reload Obsidian and enable the plugin in Settings → Community plugins.
 
-## Releasing new releases
+### Manual
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+1. Download or build the following files:
+   - `main.js`
+   - `manifest.json`
+   - `styles.css`
+2. Copy these files into a folder named `sourcemode-styling` inside your vault's `.obsidian/plugins/` directory.
+3. Reload Obsidian and enable the plugin.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+## Usage & Configuration
 
-## Adding your plugin to the community plugin list
+1. Open Obsidian and go to **Settings → Community plugins → Source Mode Styling**.
+2. Configure the following options:
+   - **Enable source mode styling:** Toggle the feature on or off.
+   - **Monospace font:** Choose from detected available fonts.
+   - **Font size:** Set the font size (9–20 px).
+   - **Line height:** Set the line height (1.0–2.5).
+3. Changes apply immediately when you switch to source mode in any markdown file.
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+## Development
 
-## How to use
+- Requires Node.js v16 or higher.
+- Main source code is in `src/`.
+- Build scripts:
+  - `npm run dev` — Build in watch mode for development.
+  - `npm run build` — Production build.
+- Versioning is managed via `version-bump.mjs` and updates `manifest.json` and `versions.json`.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+## License
 
-## Manually installing the plugin
+MIT License © Chris Howard
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+## Funding
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+If you find this plugin useful, you can add your funding URL in `manifest.json` to support further development.
 
 ## API Documentation
 
-See https://github.com/obsidianmd/obsidian-api
+For more information about the Obsidian API, see: https://github.com/obsidianmd/obsidian-api

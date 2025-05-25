@@ -94,5 +94,18 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 					}
 				});
 			});
+
+		new Setting(containerEl)
+			.setName('Heading color')
+			.setDesc('Set the color for headings in source/raw mode')
+			.addText(text => {
+				text.inputEl.type = 'color';
+				text.setValue(this.plugin.settings.headingColor || '#222222');
+				text.onChange(async (value) => {
+					this.plugin.settings.headingColor = value;
+					await this.plugin.saveSettings();
+					this.plugin.app.workspace.trigger('layout-change');
+				});
+			});
 	}
 } 
