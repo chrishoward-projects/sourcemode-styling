@@ -107,5 +107,18 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 					this.plugin.app.workspace.trigger('layout-change');
 				});
 			});
+
+		new Setting(containerEl)
+			.setName('Background color')
+			.setDesc('Set the background color for source/raw mode')
+			.addText(text => {
+				text.inputEl.type = 'color';
+				text.setValue(this.plugin.settings.backgroundColor || '#fbfaf6');
+				text.onChange(async (value) => {
+					this.plugin.settings.backgroundColor = value;
+					await this.plugin.saveSettings();
+					this.plugin.app.workspace.trigger('layout-change');
+				});
+			});
 	}
 } 

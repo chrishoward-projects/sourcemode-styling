@@ -10,6 +10,7 @@ If your plugin does not need CSS, delete this file.
 .obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
   font-family: var(--sourcemode-font-family);
   font-size: var(--sourcemode-font-size);
+  background-color: var(--sourcemode-background-color, #fbfaf6);
 }
 .obsidian-mode-raw .markdown-source-view.mod-cm6:not(.is-live-preview) .cm-scroller{
   line-height: var(--sourcemode-line-height);

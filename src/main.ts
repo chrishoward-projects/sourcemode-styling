@@ -10,6 +10,7 @@ interface SourceModeStylingSettings {
 	fontSize: number;
 	lineHeight: number;
 	headingColor: string;
+	backgroundColor: string;
 }
 
 const MONOSPACE_FONTS = [
@@ -28,7 +29,8 @@ const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	fontFamily: "Source Code Pro",
 	fontSize: 14,
 	lineHeight: 1.75,
-	headingColor: "#2d5b8c"
+	headingColor: "#2d5b8c",
+	backgroundColor: "#fbfaf6"
 }
 
 export default class SourceModeStyling extends Plugin {
@@ -53,13 +55,14 @@ export default class SourceModeStyling extends Plugin {
 					styleEl.id = "sourcemode-styling-font-style";
 					document.head.appendChild(styleEl);
 				}
-				const { fontFamily, fontSize, lineHeight, headingColor } = this.settings;
+				const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor } = this.settings;
 				styleEl.textContent = `
 					body.obsidian-mode-raw .view-content .markdown-source-view:not(.is-live-preview){
 						--sourcemode-font-family: '${fontFamily}', monospace;
 						--sourcemode-font-size: ${fontSize}px;
 						--sourcemode-line-height: ${lineHeight};
 						--sourcemode-heading-color: ${headingColor};
+						--sourcemode-background-color: ${backgroundColor};
 					}
 				`;
 			};
