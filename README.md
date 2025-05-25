@@ -1,6 +1,10 @@
-# Source Mode Styling for Obsidian
+# Source Mode Styling
 
-Source Mode Styling lets you customize the appearance of the source mode editor to use a monospace font for a "raw" look familiar to users of text editors. You can choose your preferred monospace font and tweak the font size, font weight, line height, heading colour, and background colour for editing markdown in source mode to refine the editing experience.
+Source Mode Styling lets you customize the appearance of the source mode editor.
+
+By default, Obisidan's source mode shows the markdown syntax but maintians most of the formatting and styling. This plugin overrides the font styling to render content in the raw look familiar to rsers of text editors.
+
+You can choose your preferred monospace font and tweak the font size, font weight, line height, heading colour, and background colour for editing markdown in source mode to refine the editing experience.
 
 ## Usage & Configuration
 
