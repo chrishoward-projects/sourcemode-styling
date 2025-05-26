@@ -1,10 +1,8 @@
 # Source Mode Styling
 
-Source Mode Styling lets you customize the appearance of the source mode editor.
+Source Mode Styling lets you customize the appearance of the Obsidan source mode editor with a monospace font to render content in the "raw" look that is familiar to users of text editors. It still maintains some very basif formating, including bold and italics.
 
-By default, Obisidan's source mode shows the markdown syntax but maintians most of the formatting and styling. This plugin overrides the font styling to render content in the raw look familiar to rsers of text editors.
-
-You can choose your preferred monospace font and tweak the font size, font weight, line height, heading colour, and background colour for editing markdown in source mode to refine the editing experience.
+By default, Obisidan's source mode shows the markdown syntax but maintains most of the formatting and styling. The Source Mode Styling plugin lets you override this, with settings for your preferred monospace font, and lets you tweak the font size, font weight, line height, heading colour, and background colour.
 
 ## Usage & Configuration
 
@@ -23,7 +21,3 @@ You can choose your preferred monospace font and tweak the font size, font weigh
 ## License
 
 MIT License © Chris Howard 2025
-
-## Funding
-
-If you find this plugin useful, you can add your funding URL in `manifest.json` to support further development.
