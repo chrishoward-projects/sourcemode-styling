@@ -1,36 +1,31 @@
-import { Setting } from 'obsidian';
 import type SourceModeStyling from '../main';
+import { BaseSetting, SettingConfig } from './BaseSetting';
+
+class HeadingColorSetting extends BaseSetting {
+	constructor(containerEl: HTMLElement, plugin: SourceModeStyling) {
+		const config: SettingConfig = {
+			name: 'Heading color',
+			description: 'Set the color for headings in source mode',
+			defaultValue: '#2d5b8c',
+			options: [
+				{ value: 'theme', text: 'Theme default' },
+				{ value: 'custom', text: 'Custom' }
+			],
+			inputType: 'color'
+		};
+		super(containerEl, plugin, config);
+	}
+
+	protected getSettingValue(): string {
+		const headingColor = this.plugin.settings.headingColor;
+		return headingColor && headingColor !== 'theme' ? headingColor : '#2d5b8c';
+	}
+
+	protected setSettingValue(value: string | number): void {
+		this.plugin.settings.headingColor = value === 'theme' ? 'theme' : value as string;
+	}
+}
 
 export function addHeadingColorSetting(containerEl: HTMLElement, plugin: SourceModeStyling) {
-	const headingColorSetting = new Setting(containerEl)
-		.setName('Heading color')
-		.setDesc('Set the color for headings in source mode');
-	const headingColorModeSelect = document.createElement('select');
-	headingColorModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
-	const isHeadingColorCustom = plugin.settings.headingColor && plugin.settings.headingColor !== 'theme';
-	headingColorModeSelect.value = isHeadingColorCustom ? 'custom' : 'theme';
-	headingColorSetting.controlEl.appendChild(headingColorModeSelect);
-	const headingColorInput = document.createElement('input');
-	headingColorInput.type = 'color';
-	headingColorInput.value = isHeadingColorCustom ? plugin.settings.headingColor : '#2d5b8c';
-	if (!isHeadingColorCustom) headingColorInput.style.display = 'none';
-	headingColorSetting.controlEl.appendChild(headingColorInput);
-	headingColorModeSelect.addEventListener('change', async () => {
-		if (headingColorModeSelect.value === 'custom') {
-			headingColorInput.style.display = '';
-			plugin.settings.headingColor = headingColorInput.value;
-		} else {
-			headingColorInput.style.display = 'none';
-			plugin.settings.headingColor = 'theme';
-		}
-		await plugin.saveSettings();
-		plugin.app.workspace.trigger('layout-change');
-	});
-	headingColorInput.addEventListener('input', async () => {
-		if (headingColorModeSelect.value === 'custom') {
-			plugin.settings.headingColor = headingColorInput.value;
-			await plugin.saveSettings();
-			plugin.app.workspace.trigger('layout-change');
-		}
-	});
+	new HeadingColorSetting(containerEl, plugin).render();
 } 
