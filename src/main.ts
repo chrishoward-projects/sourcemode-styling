@@ -6,12 +6,12 @@ import { StyleInjector } from './StyleInjector';
 
 export interface SourceModeStylingSettings {
 	rawModeEnabled: boolean;
-	fontFamily: string;
-	fontSize: number;
-	lineHeight: number;
-	headingColor: string;
-	backgroundColor: string;
-	fontWeight?: string | number;
+	fontFamily: string | 'theme';
+	fontSize: number | 'theme';
+	lineHeight: number | 'theme';
+	headingColor: string | 'theme';
+	backgroundColor: string | 'theme';
+	fontWeight: string | number | 'theme';
 }
 
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {
