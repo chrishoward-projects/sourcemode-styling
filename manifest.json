@@ -1,11 +1,11 @@
 {
 	"id": "sourcemode-styling",
-	"name": "Source mode styling",
+	"name": "Source Mode Styling",
 	"version": "0.2.0",
 	"minAppVersion": "0.15.0",
-	"description": "Style source mode",
+	"description": "Style source mode with monospace font",
 	"author": "Chris Howard",
 	"authorUrl": "",
-	"fundingUrl": "",
+	"fundingUrl": "https://buymeacoffee.com/4e8cu9fzwy",
 	"isDesktopOnly": false
 }
