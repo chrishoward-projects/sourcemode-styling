@@ -1,8 +1,10 @@
 import { MarkdownView,  Plugin, EventRef } from 'obsidian';
 import { SourceModeStylingSettingTab } from './settingsTab';
+import { CSSGenerator } from './CSSGenerator';
+import { StyleInjector } from './StyleInjector';
 
 
-interface SourceModeStylingSettings {
+export interface SourceModeStylingSettings {
 	rawModeEnabled: boolean;
 	fontFamily: string;
 	fontSize: number;
@@ -53,45 +55,8 @@ export default class SourceModeStyling extends Plugin {
 	enableStyling() {
 		if (this.styleListenersRegistered) return;
 		const updateInjectedStyle = () => {
-			let styleEl = document.getElementById("sourcemode-styling-font-style") as HTMLStyleElement | null;
-			if (!styleEl) {
-				styleEl = document.createElement("style");
-				styleEl.id = "sourcemode-styling-font-style";
-				document.head.appendChild(styleEl);
-			}
-			const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor, fontWeight } = this.settings;
-			let backgroundColorVar = backgroundColor && backgroundColor !== 'theme' ? `background-color: ${backgroundColor};` : '';
-			let headingColorVar = headingColor && headingColor !== 'theme' ? `color: ${headingColor};` : '';
-			let fontFamilyVar = fontFamily && fontFamily !== 'theme' ? `font-family: '${fontFamily}', monospace;` : '';
-			let fontSizeVar = typeof fontSize === 'number' ? `font-size: ${fontSize}px;` : '';
-			let lineHeightVar = typeof lineHeight === 'number' ? `line-height: ${lineHeight};` : '';
-			let fontWeightVar = '';
-			if (fontWeight && fontWeight !== 'theme') {
-				if (fontWeight === 'normal') fontWeightVar = 'font-weight: 400;';
-				else if (fontWeight === 'light') fontWeightVar = 'font-weight: 300;';
-				else if (fontWeight === 'semibold') fontWeightVar = 'font-weight: 600;';
-				else fontWeightVar = `font-weight: ${fontWeight};`;
-			}
-			styleEl.textContent = `
-			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
-					${fontFamilyVar}
-					${fontSizeVar}
-					${backgroundColorVar}
-					${fontWeightVar}
-				}
-				.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller{
-					${lineHeightVar}
-				}
-				
-			  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
-					${fontFamilyVar}
-					${lineHeightVar}
-					${headingColorVar}
-					${fontWeightVar}
-				}
-				
-				
-			`;
+			const css = CSSGenerator.generateCSS(this.settings);
+			StyleInjector.injectCSS(css);
 		};
 
 		const updateBodyModeClass = () => {
@@ -122,8 +87,7 @@ export default class SourceModeStyling extends Plugin {
 		if (!this.styleListenersRegistered) return;
 		const body = document.body;
 		body.classList.remove("obsidian-mode-raw");
-		const styleEl = document.getElementById("sourcemode-styling-font-style");
-		if (styleEl) styleEl.remove();
+		StyleInjector.removeCSS();
 		if (this._activeLeafChangeHandler && this._updateBodyModeClass) this.app.workspace.off("active-leaf-change", this._updateBodyModeClass);
 		if (this._layoutChangeHandler && this._updateBodyModeClass) this.app.workspace.off("layout-change", this._updateBodyModeClass);
 		this.styleListenersRegistered = false;
