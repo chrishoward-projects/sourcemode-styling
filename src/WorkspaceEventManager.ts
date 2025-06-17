@@ -9,11 +9,13 @@ export class WorkspaceEventManager {
 	}
 
 	on(eventName: string, callback: () => void): void {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const eventRef = this.workspace.on(eventName as any, callback);
 		this.eventRefs.push(eventRef);
 	}
 
 	off(eventName: string, callback: () => void): void {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.workspace.off(eventName as any, callback);
 	}
 

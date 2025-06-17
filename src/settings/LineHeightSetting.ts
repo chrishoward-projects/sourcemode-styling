@@ -25,6 +25,7 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 			if (!isNaN(num)) plugin.settings.lineHeight = num;
 		} else {
 			lineHeightInput.style.display = 'none';
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(plugin.settings as any).lineHeight = 'theme';
 		}
 		await plugin.saveSettings();

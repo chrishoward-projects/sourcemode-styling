@@ -5,9 +5,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 - **Build for development**: `npm run dev` (runs esbuild in watch mode)
-- **Build for production**: `npm run build` (type checks then builds with minification)
-- **Lint**: Use eslint with the configured .eslintrc (TypeScript ESLint rules)
-- **Version bump**: `npm run version` (updates manifest.json and versions.json)
+- **Build for production**: `npm run build` (type checks, builds with minification, and deploys to test vault)
+- **Lint**: `npm run lint` (ESLint with TypeScript rules)
+- **Deploy**: `npm run deploy` (copy built files to test vault)
+- **Version management**: `npm run update-version` (bump version, update files, build, and commit in one step)
+- **Release**: `npm run release` (create GitHub release - manual when ready)
+
+### Version Management Workflow
+- Use `npm run update-version` instead of `npm version patch` (prevents dual commits)
+- Updates package.json, manifest.json, versions.json, CHANGELOG.md
+- Automatically builds plugin and stages all changes
+- Creates single clean commit with all version-related changes
 
 ## Architecture Overview
 

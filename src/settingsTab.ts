@@ -1,5 +1,4 @@
-import { PluginSettingTab, Setting } from 'obsidian';
-import { detectAvailableFonts } from './fontDetect';
+import { PluginSettingTab, App } from 'obsidian';
 import type SourceModeStyling from './main';
 import { addFontFamilySetting } from './settings/FontFamilySetting';
 import { addFontSizeSetting } from './settings/FontSizeSetting';
@@ -12,7 +11,7 @@ import { addEnableToggleSetting } from './settings/EnableToggleSetting';
 export class SourceModeStylingSettingTab extends PluginSettingTab {
 	plugin: SourceModeStyling;
 
-	constructor(app: any, plugin: SourceModeStyling) {
+	constructor(app: App, plugin: SourceModeStyling) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
