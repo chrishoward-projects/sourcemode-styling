@@ -40,9 +40,41 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 - **State Management**: Plugin tracks styling state with `styleListenersRegistered` flag
 - **View State Detection**: Checks if current view is MarkdownView in source mode to apply styling
 
+### Development Notes
+
+- Plugin targets ES2018 and uses CommonJS format for Obsidian compatibility
+- External Obsidian APIs are marked as external in the build process
+- Uses TypeScript with strict null checks and inline source maps for development
+- Refer always to Obsidian Developer Dcoumentation at [Obsidian Developer Docs](https://docs.obsidian.md/Home)
+
+### Obsidian Submission Compliance
+
+When making changes, ensure compliance with Obsidian submission guidelines:
+- **Security**: Use DOM API or DOMParser instead of innerHTML/outerHTML
+- **Styling**: Move inline styles to CSS files for better theme compatibility
+- **Commands**: Don't include plugin name in command names
+- **Lifecycle**: Never detach leaves in onunload() method
+- **Policies**: Ensure compliance with Obsidian Developer Policies https://docs.obsidian.md/Developer+policies
+- **Guidelines**: Ensure compliance with Obsidian Plugin Guidelines https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines
+
+
+### Version Management
+
+**IMPORTANT**: After completing any task that adds features, fixes bugs, or makes changes:
+1. Update CHANGELOG.md with the changes made
+2. Run `npm version patch` to bump the version and update manifest.json
+3. Commit the version bump
+4. This maintains proper version history and prepares for releases
+
 ### Build Configuration
 
 - Uses esbuild for bundling (`esbuild.config.mjs`)
 - Entry point: `src/main.ts` → output: `main.js`
 - External dependencies include Obsidian API and CodeMirror modules
 - Development builds include inline source maps, production builds are minified
+
+## Plugin Manifest
+
+- Plugin ID: `sourcemode-styling`
+- Minimum Obsidian version: 0.15.0
+- Desktop and mobile compatible
