@@ -153,4 +153,4 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
 MIT License © Chris Howard 2025
 
-<a href="https://buymeacoffee.com/4e8cu9fzwy"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" width="150px"></a>
+[![Buy me a coffee](assets/images/bmc-button-small.png)](https://buymeacoffee.com/4e8cu9fzwy)
