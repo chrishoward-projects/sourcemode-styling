@@ -5,7 +5,7 @@ import { MONOSPACE_FONTS } from '../constants';
 
 class FontFamilySetting extends BaseSetting {
 	constructor(containerEl: HTMLElement, plugin: SourceModeStyling) {
-		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS);
+		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS, containerEl);
 		const config: SettingConfig = {
 			name: 'Monospace font',
 			description: 'Select a monospace font for source mode',

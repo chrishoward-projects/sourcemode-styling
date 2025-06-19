@@ -6,7 +6,14 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 		.setName('Line height')
 		.setDesc('Set the line height for source mode (e.g. 1.0–2.5)');
 	const lineHeightModeSelect = document.createElement('select');
-	lineHeightModeSelect.innerHTML = `<option value="theme">Theme default</option><option value="custom">Custom</option>`;
+	const themeOption = document.createElement('option');
+	themeOption.value = 'theme';
+	themeOption.textContent = 'Theme default';
+	const customOption = document.createElement('option');
+	customOption.value = 'custom';
+	customOption.textContent = 'Custom';
+	lineHeightModeSelect.appendChild(themeOption);
+	lineHeightModeSelect.appendChild(customOption);
 	const isLineHeightCustom = typeof plugin.settings.lineHeight === 'number';
 	lineHeightModeSelect.value = isLineHeightCustom ? 'custom' : 'theme';
 	lineHeightSetting.controlEl.appendChild(lineHeightModeSelect);

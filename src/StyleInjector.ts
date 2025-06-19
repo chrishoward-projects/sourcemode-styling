@@ -1,22 +1,21 @@
 export class StyleInjector {
 	private static readonly STYLE_ID = "sourcemode-styling-font-style";
+	private static styleEl: HTMLStyleElement | null = null;
 
 	static injectCSS(css: string): void {
-		let styleEl = document.getElementById(this.STYLE_ID) as HTMLStyleElement | null;
-		
-		if (!styleEl) {
-			styleEl = document.createElement("style");
-			styleEl.id = this.STYLE_ID;
-			document.head.appendChild(styleEl);
+		if (!this.styleEl) {
+			this.styleEl = document.createElement("style");
+			this.styleEl.id = this.STYLE_ID;
+			document.head.appendChild(this.styleEl);
 		}
 		
-		styleEl.textContent = css;
+		this.styleEl.textContent = css;
 	}
 
 	static removeCSS(): void {
-		const styleEl = document.getElementById(this.STYLE_ID);
-		if (styleEl) {
-			styleEl.remove();
+		if (this.styleEl) {
+			this.styleEl.remove();
+			this.styleEl = null;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-export function detectAvailableFonts(fontList: string[]): string[] {
+export function detectAvailableFonts(fontList: string[], containerEl?: HTMLElement): string[] {
 	const baseFonts = ['monospace', 'sans-serif', 'serif'];
 	const testString = "mmmmmmmmmmlli";
 	const testSize = "72px";
@@ -9,7 +9,10 @@ export function detectAvailableFonts(fontList: string[]): string[] {
 	testElement.style.position = 'absolute';
 	testElement.style.left = '-99999px';
 	testElement.textContent = testString;
-	document.body.appendChild(testElement);
+	
+	// Use provided container or fall back to document.body
+	const parentElement = containerEl || document.body;
+	parentElement.appendChild(testElement);
 
 	// Get baseline measurements
 	const baselines: {[key: string]: {width: number, height: number}} = {};
@@ -45,7 +48,7 @@ export function detectAvailableFonts(fontList: string[]): string[] {
 	});
 
 	// Clean up
-	document.body.removeChild(testElement);
+	parentElement.removeChild(testElement);
 
 	return availableFonts;
 } 

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.1]
 
 ### Added
 - Comprehensive development workflow with automated scripts
@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Enhanced version-bump script with CHANGELOG support and automatic building
 - Updated npm scripts to follow best practices
+
+### Fixed
+- Obsidian submission compliance issues
+- Replaced innerHTML usage with DOM API methods for security
+- Improved DOM element handling in font detection
+- Enhanced CSS injection with proper element tracking
 
 ## [0.2.0] - 2025-06-17
 

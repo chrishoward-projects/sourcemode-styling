@@ -38,9 +38,12 @@ export abstract class BaseSetting {
 
 	private createDropdownWithInput(setting: Setting): void {
 		const dropdown = document.createElement('select');
-		dropdown.innerHTML = this.config.options!
-			.map(option => `<option value="${option.value}">${option.text}</option>`)
-			.join('');
+		this.config.options!.forEach(option => {
+			const optionElement = document.createElement('option');
+			optionElement.value = option.value;
+			optionElement.textContent = option.text;
+			dropdown.appendChild(optionElement);
+		});
 
 		const currentValue = this.getSettingValue();
 		const isCustom = this.isCustomValue(currentValue);
