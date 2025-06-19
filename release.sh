@@ -32,7 +32,7 @@ fi
 # Create git tag (without 'v' prefix)
 echo "Creating git tag: $CURRENT_VERSION"
 git tag "$CURRENT_VERSION"
-git push origin "$CURRENT_VERSION"
+git push origin-projects "$CURRENT_VERSION"
 
 # Create release zip
 ZIP_NAME="${PLUGIN_NAME}-${CURRENT_VERSION}.zip"
