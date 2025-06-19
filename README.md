@@ -118,12 +118,6 @@ For advanced users, the plugin generates CSS that can be further customized:
 - Font selection is limited to system fonts on mobile
 - Some advanced features may not be available on mobile platforms
 
-## Support
-
-If you find this plugin helpful, consider supporting its development:
-
-<a href="https://buymeacoffee.com/4e8cu9fzwy"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" width="150px"></a>
-
 ## Contributing
 
 Contributions are welcome! Please see our [development documentation](CLAUDE.md) for setup instructions.
@@ -142,8 +136,4 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
 MIT License © Chris Howard 2025
 
-![Buy me a coffee](assets/images/bmc-button.png)
-
----
-
-**Made with ❤️ for the Obsidian community**
+<a href="https://buymeacoffee.com/4e8cu9fzwy"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" width="150px"></a>
