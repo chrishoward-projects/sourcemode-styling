@@ -45,7 +45,7 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 - Plugin targets ES2018 and uses CommonJS format for Obsidian compatibility
 - External Obsidian APIs are marked as external in the build process
 - Uses TypeScript with strict null checks and inline source maps for development
-- Refer always to Obsidian Developer Dcoumentation at [Obsidian Developer Docs](https://docs.obsidian.md/Home)
+- Refer always to Obsidian Developer Dcoumentation @https://github.com/obsidianmd/obsidian-developer-docs
 
 ### Obsidian Submission Compliance
 
@@ -54,8 +54,8 @@ When making changes, ensure compliance with Obsidian submission guidelines:
 - **Styling**: Move inline styles to CSS files for better theme compatibility
 - **Commands**: Don't include plugin name in command names
 - **Lifecycle**: Never detach leaves in onunload() method
-- **Policies**: Ensure compliance with Obsidian Developer Policies https://docs.obsidian.md/Developer+policies
-- **Guidelines**: Ensure compliance with Obsidian Plugin Guidelines https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines
+- **Policies**: Ensure compliance with Obsidian Developer Policies @https://github.com/obsidianmd/obsidian-developer-docs
+- **Guidelines**: Ensure compliance with Obsidian Plugin Guidelines @https://github.com/obsidianmd/obsidian-developer-docs
 
 
 ### Version Management
