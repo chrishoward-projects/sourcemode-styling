@@ -23,7 +23,7 @@ fi
 echo "Deploying plugin files to test vault..."
 cp main.js "$TEST_VAULT_PATH/"
 cp manifest.json "$TEST_VAULT_PATH/"
-cp styles.css "$TEST_VAULT_PATH/" 2>/dev/null || echo "No styles.css to copy"
+cp styles.css "$TEST_VAULT_PATH/" 
 
 echo "Deployment completed successfully to $TEST_VAULT_PATH"
 echo "Restart Obsidian or reload the plugin to see changes."
