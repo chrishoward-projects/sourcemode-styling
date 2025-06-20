@@ -98,13 +98,17 @@ The plugin works seamlessly with Obsidian themes:
 
 ### CSS Customization
 
-For advanced users, the plugin generates CSS that can be further customized:
+For advanced users, the plugin adds a body class `.obsidian-mode-raw` and generates CSS that can be further customized:
 
 ```CSS
+/* All text */
 .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
-  font-family: 'Your Font', monospace;
-  font-size: 14px;
-  /* Additional custom styles */
+   /* Your styles */
+}
+
+/* Headings */
+.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+  /* Your styles */
 }
 ```
 

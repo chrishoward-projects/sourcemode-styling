@@ -12,6 +12,7 @@ class FontWeightSetting extends BaseSetting {
 				{ value: 'normal', text: 'Normal' },
 				{ value: 'light', text: 'Light' },
 				{ value: 'semibold', text: 'Semi-bold' },
+				{ value: 'bold', text: 'Bold' },
 				{ value: 'custom', text: 'Custom' }
 			],
 			inputType: 'number',

@@ -47,7 +47,7 @@ export abstract class BaseSetting {
 
 		const currentValue = this.getSettingValue();
 		const isCustom = this.isCustomValue(currentValue);
-		dropdown.value = isCustom ? 'custom' : 'theme';
+		dropdown.value = isCustom ? 'custom' : currentValue.toString();
 		setting.controlEl.appendChild(dropdown);
 
 		if (this.config.inputType) {
@@ -71,7 +71,13 @@ export abstract class BaseSetting {
 	private createInput(isVisible: boolean, value: string | number): HTMLInputElement {
 		const input = document.createElement('input');
 		input.type = this.config.inputType || 'text';
-		input.value = value.toString();
+		
+		// For color inputs, use default color if value is 'theme'
+		if (this.config.inputType === 'color' && value === 'theme') {
+			input.value = this.config.defaultValue;
+		} else {
+			input.value = value.toString();
+		}
 		
 		if (this.config.inputAttributes) {
 			Object.entries(this.config.inputAttributes).forEach(([key, val]) => {
@@ -116,7 +122,11 @@ export abstract class BaseSetting {
 	}
 
 	private isCustomValue(value: string | number): boolean {
-		return value !== 'theme' && value !== this.config.defaultValue;
+		if (!this.config.options) return false;
+		
+		// Check if the value exists in the predefined options
+		const predefinedValues = this.config.options.map(option => option.value);
+		return !predefinedValues.includes(value.toString());
 	}
 
 	private async saveAndTrigger(): Promise<void> {

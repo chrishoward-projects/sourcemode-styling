@@ -22,16 +22,14 @@ export class CSSGenerator {
 				${fontSizeVar}
 				${backgroundColorVar}
 				${fontWeightVar}
-			}
-			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller{
 				${lineHeightVar}
 			}
 			
 			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
-				${fontFamilyVar}
-				${lineHeightVar}
+				// ${fontFamilyVar}
+				// ${lineHeightVar}
 				${headingColorVar}
-				${fontWeightVar}
+				// ${fontWeightVar}
 			}
 		`;
 	}
@@ -40,8 +38,9 @@ export class CSSGenerator {
 		if (!fontWeight || fontWeight === 'theme') return '';
 		
 		if (fontWeight === 'normal') return 'font-weight: 400;';
-		if (fontWeight === 'light') return 'font-weight: 300;';
+		if (fontWeight === 'light') return 'font-weight: 200;';
 		if (fontWeight === 'semibold') return 'font-weight: 600;';
+		if (fontWeight === 'bold') return 'font-weight: 700;';
 		
 		return `font-weight: ${fontWeight};`;
 	}

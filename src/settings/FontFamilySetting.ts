@@ -6,6 +6,21 @@ import { MONOSPACE_FONTS } from '../constants';
 class FontFamilySetting extends BaseSetting {
 	constructor(containerEl: HTMLElement, plugin: SourceModeStyling) {
 		const availableFonts = detectAvailableFonts(MONOSPACE_FONTS, containerEl);
+		
+		// Always include the current font in options if it's not already there
+		const currentFont = plugin.settings.fontFamily;
+		if (currentFont && currentFont !== 'theme' && !availableFonts.includes(currentFont)) {
+			availableFonts.push(currentFont);
+		}
+		
+		// Ensure common fonts are always available
+		const essentialFonts = ['Courier New', 'Consolas', 'Monaco', 'monospace'];
+		essentialFonts.forEach(font => {
+			if (!availableFonts.includes(font)) {
+				availableFonts.push(font);
+			}
+		});
+		
 		const config: SettingConfig = {
 			name: 'Monospace font',
 			description: 'Select a monospace font for source mode',

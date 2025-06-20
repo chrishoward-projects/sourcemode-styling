@@ -17,8 +17,7 @@ class HeadingColorSetting extends BaseSetting {
 	}
 
 	protected getSettingValue(): string {
-		const headingColor = this.plugin.settings.headingColor;
-		return headingColor && headingColor !== 'theme' ? headingColor : '#2d5b8c';
+		return this.plugin.settings.headingColor || 'theme';
 	}
 
 	protected setSettingValue(value: string | number): void {

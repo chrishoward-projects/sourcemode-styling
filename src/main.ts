@@ -39,7 +39,7 @@ export default class SourceModeStyling extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SourceModeStylingSettingTab(this.app, this));
 
-		console.log("Raw mode enabled", this.settings.rawModeEnabled);
+		// console.log("Raw mode enabled", this.settings.rawModeEnabled);
 
 		this.updateStylingEnabled();
 	}

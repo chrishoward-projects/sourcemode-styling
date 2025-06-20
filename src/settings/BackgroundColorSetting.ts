@@ -17,8 +17,7 @@ class BackgroundColorSetting extends BaseSetting {
 	}
 
 	protected getSettingValue(): string {
-		const backgroundColor = this.plugin.settings.backgroundColor;
-		return backgroundColor && backgroundColor !== 'theme' ? backgroundColor : '#fbfaf6';
+		return this.plugin.settings.backgroundColor || 'theme';
 	}
 
 	protected setSettingValue(value: string | number): void {
