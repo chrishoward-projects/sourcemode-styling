@@ -2,10 +2,12 @@ import type { SourceModeStylingSettings } from './main';
 
 export class CSSGenerator {
 	static generateCSS(settings: SourceModeStylingSettings): string {
-		const { fontFamily, fontSize, lineHeight, headingColor, backgroundColor, fontWeight } = settings;
+		const { fontFamily, fontSize, lineHeight, fontColor, headingColor, backgroundColor, fontWeight } = settings;
 		
 		const backgroundColorVar = backgroundColor && backgroundColor !== 'theme' 
 			? `background-color: ${backgroundColor};` : '';
+		const fontColorVar = fontColor && fontColor !== 'theme' 
+			? `color: ${fontColor};` : '';
 		const headingColorVar = headingColor && headingColor !== 'theme' 
 			? `color: ${headingColor};` : '';
 		const fontFamilyVar = fontFamily && fontFamily !== 'theme' 
@@ -20,16 +22,16 @@ export class CSSGenerator {
 			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
 				${fontFamilyVar}
 				${fontSizeVar}
+				${fontColorVar}
 				${backgroundColorVar}
 				${fontWeightVar}
 				${lineHeightVar}
 			}
-			
 			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
-				// ${fontFamilyVar}
-				// ${lineHeightVar}
+				color:inherit;
+			}
+			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
 				${headingColorVar}
-				// ${fontWeightVar}
 			}
 		`;
 	}

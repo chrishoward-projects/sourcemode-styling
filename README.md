@@ -11,7 +11,7 @@ Source Mode Styling enhances Obsidian's source mode editor by applying monospace
 * **Full control** over source mode appearance
 * **Monospace font detection** - automatically finds available fonts on your system
 * **Real-time preview** - changes apply instantly
-* **Theme-aware** - respects your theme's colors when desired
+* **Theme-aware** - respects your theme's colours when desired
 * **Cross-platform** - works on desktop and mobile
 
 ## Installation
@@ -47,8 +47,8 @@ Source Mode Styling enhances Obsidian's source mode editor by applying monospace
 | **Font size**                  | Adjust text size for readability  | 9-20px or theme default                    |
 | **Font weight**                | Control text thickness            | Normal, Light, Semi-bold, Custom (100-900) |
 | **Line height**                | Adjust vertical spacing           | 1.0-2.5 or theme default                   |
-| **Heading colour**             | Customize heading appearance      | Custom color picker or theme default       |
-| **Background colour**          | Set editor background             | Custom color picker or theme default       |
+| **Heading colour**             | Customize heading appearance      | Custom colour picker or theme default       |
+| **Background colour**          | Set editor background             | Custom colour picker or theme default       |
 
 ### Font Detection
 
@@ -70,7 +70,8 @@ The plugin automatically detects monospace fonts installed on your system, inclu
 
 **Default Obsidian Source Mode:**
 
-* Mixed formatting with visual styling
+* Displays formatting syntax with theme styling
+* Minimal visual differentiation from Live Preview mode
 * Variable-width fonts
 * Theme-dependent appearance
 
@@ -79,9 +80,9 @@ The plugin automatically detects monospace fonts installed on your system, inclu
 **With Source Mode Styling:**
 
 * Clean, monospace text rendering
-* Consistent character spacing
-* Customizable colors and sizing
-* True code editor feel
+* Uses theme colours and styling
+* Customizable colours and sizing
+* True "raw" editor look and feel
 * Clear differentiation from Live Preview editing
 
 ![1.00](assets/images/sourcemode-styling.png)
@@ -93,7 +94,7 @@ The plugin automatically detects monospace fonts installed on your system, inclu
 The plugin works seamlessly with Obsidian themes:
 
 * Use "Theme default" options to maintain theme consistency
-* Override specific elements (fonts, colors) while keeping theme aesthetics
+* Override specific elements (fonts, colours) while keeping theme aesthetics
 * Custom settings persist across theme changes
 
 ### CSS Customization

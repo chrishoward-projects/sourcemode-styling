@@ -14,7 +14,7 @@ class FontFamilySetting extends BaseSetting {
 		}
 		
 		// Ensure common fonts are always available
-		const essentialFonts = ['Courier New', 'Consolas', 'Monaco', 'monospace'];
+		const essentialFonts = ['monospace'];
 		essentialFonts.forEach(font => {
 			if (!availableFonts.includes(font)) {
 				availableFonts.push(font);

@@ -9,6 +9,7 @@ export interface SourceModeStylingSettings {
 	fontFamily: string | 'theme';
 	fontSize: number | 'theme';
 	lineHeight: number | 'theme';
+	fontColor: string | 'theme';
 	headingColor: string | 'theme';
 	backgroundColor: string | 'theme';
 	fontWeight: string | number | 'theme';
@@ -19,6 +20,7 @@ const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	fontFamily: "Source Code Pro",
 	fontSize: 14,
 	lineHeight: 1.75,
+	fontColor: "theme",
 	headingColor: "#2d5b8c",
 	backgroundColor: "theme",
 	fontWeight: "theme"
