@@ -56,6 +56,7 @@ export class StylingManager {
 			if (this.isInSourceMode()) {
 				container.classList.add("obsidian-mode-raw");
 			}
+			
 			updateInjectedStyle();
 		};
 
@@ -118,17 +119,14 @@ export class StylingManager {
 	}
 
 	private isInSourceMode(): boolean {
-		// Check all markdown views, not just the active one
-		// This handles the case where a side panel is active but editor is still in source mode
-		const leaves = this.app.workspace.getLeavesOfType('markdown');
+		// Check only the active markdown view - we only want styling for the currently active note
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		
-		for (const leaf of leaves) {
-			const view = leaf.view as MarkdownView;
-			if (view && view.getState().source === true && view.getState().mode === "source") {
-				return true;
-			}
+		if (!activeView) {
+			return false;
 		}
 		
-		return false;
+		const state = activeView.getState();
+		return state.source === true && state.mode === "source";
 	}
 } 

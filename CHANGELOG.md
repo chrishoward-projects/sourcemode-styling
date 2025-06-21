@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.2.7] - 2025-06-21
+
+### Fixed
+- Critical fix for vault-specific class persistence issue
+- Source mode detection now checks only the active view instead of all markdown views
+- Resolved issue where background markdown views caused styling to persist incorrectly
+- Class manipulation now properly responds to the currently active note's mode
+
 ## [0.2.6] - 2025-06-21
 
 ### Fixed
