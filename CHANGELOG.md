@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.2.8] - 2025-06-21
+
+### Changed
+- Updated plugin description to better explain purpose of differentiating source mode from Live Preview
+
 ## [0.2.7] - 2025-06-21
 
 ### Fixed
