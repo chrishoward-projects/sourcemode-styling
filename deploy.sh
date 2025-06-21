@@ -4,11 +4,16 @@
 # Copies built files to active Obsidian vault
 
 USER_HOME="$HOME"
-SOURCE_DIR="$USER_HOME/Obsidian/Development/.obsidian/plugins/sourcemode-styling"
-TARGET_DIR="$USER_HOME/Obsidian/APRIL/.obsidian/plugins/sourcemode-styling"
+DEV_VAULT="Development"
+TARGET_VAULT="APRIL"
+SOURCE_DIR="$USER_HOME/Obsidian/$DEV_VAULT/.obsidian/plugins/sourcemode-styling"
+TARGET_DIR="$USER_HOME/Obsidian/$TARGET_VAULT/.obsidian/plugins/sourcemode-styling"
 
-# Create target directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
+# Check if target directory exists, exit if it doesn't
+if [[ ! -d "$TARGET_DIR" ]]; then
+    echo "Error: Target directory does not exist: $TARGET_DIR"
+    exit 1
+fi
 
 # Copy files
 cp "$SOURCE_DIR/main.js" "$TARGET_DIR/"

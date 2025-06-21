@@ -6,14 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.2.4]
+
+## [0.2.6] - 2025-06-21
+
+### Fixed
+- Version update error
+
+## [0.2.5] - 2025-06-21
+
+### Fixed
+- Critical fix for source mode detection when side panels are active
+- Source mode styling now correctly persists during all UI interactions
+- Resolved issue where clicking side panels would incorrectly disable styling
+
+## [0.2.4] - 2025-05-21
 
 ### Added
 - Font color setting with theme default and custom color picker
 - Default custom font color set to #333333
+- MutationObserver to maintain source mode styling when side panels interfere with body classes
+- StylingManager class for better code organization
 
 ### Changed
 - Streamlined essential font list to focus on most reliable detection
+- Refactored styling logic from main.ts into dedicated StylingManager class
+- Improved separation of concerns between plugin lifecycle and styling management
+
+### Fixed
+- Source mode styling now persists during side panel interactions
+- Body class changes no longer remove source mode styling
 
 ## [0.2.3] - 2025-06-20
 
