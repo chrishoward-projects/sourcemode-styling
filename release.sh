@@ -49,12 +49,12 @@ gh release create "$CURRENT_VERSION" \
     --title "v${CURRENT_VERSION}" \
     --notes "$RELEASE_NOTES" \
     --draft \
-    main.js manifest.json "$ZIP_NAME"
+    main.js manifest.json styles.css "$ZIP_NAME"
 
 echo "Release created successfully!"
 echo "- Tag: $CURRENT_VERSION"
 echo "- Draft release created on GitHub"
-echo "- Files uploaded: main.js, manifest.json, $ZIP_NAME"
+echo "- Files uploaded: main.js, manifest.json, styles.css, $ZIP_NAME"
 echo ""
 echo "Next steps:"
 echo "1. Edit the release notes on GitHub"

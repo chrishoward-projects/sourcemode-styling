@@ -1,6 +1,6 @@
 {
 	"name": "sourcemode-styling",
-	"version": "0.2.9",
+	"version": "0.2.10",
 	"description": "Obsidian plugin to style source mode with monospace font",
 	"main": "main.js",
 	"scripts": {
