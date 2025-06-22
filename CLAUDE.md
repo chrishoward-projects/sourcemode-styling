@@ -35,7 +35,7 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 
 ### Key Plugin Mechanics
 
-- **CSS Targeting**: Styles target `.obsidian-mode-raw .markdown-source-view.mod-cm6` selectors
+- **CSS Targeting**: Styles target `.source-mode-raw .markdown-source-view.mod-cm6` selectors
 - **Dynamic Styling**: CSS is generated and injected based on current settings values
 - **State Management**: Plugin tracks styling state with `styleListenersRegistered` flag
 - **View State Detection**: Checks if current view is MarkdownView in source mode to apply styling

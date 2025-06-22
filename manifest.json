@@ -1,7 +1,7 @@
 {
 	"id": "sourcemode-styling",
 	"name": "Source Mode Styling",
-	"version": "0.2.11",
+	"version": "0.2.12",
 	"minAppVersion": "0.15.0",
 	"description": "Provides a customisable raw look in source mode using a monospace font to clearly differentiate from Live Preview.",
 	"author": "Chris Howard",

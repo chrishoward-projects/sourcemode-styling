@@ -19,7 +19,7 @@ export class CSSGenerator {
 		const fontWeightVar = this.generateFontWeightCSS(fontWeight);
 
 		return `
-			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
+			.source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
 				${fontFamilyVar}
 				${fontSizeVar}
 				${fontColorVar}
@@ -27,10 +27,10 @@ export class CSSGenerator {
 				${fontWeightVar}
 				${lineHeightVar}
 			}
-			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+			.source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
 				color:inherit;
 			}
-			.obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+			.source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
 				${headingColorVar}
 			}
 		`;

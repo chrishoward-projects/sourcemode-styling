@@ -7,7 +7,7 @@ If your plugin does not need CSS, delete this file.
 
 */
 
- .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+ .source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
    font-size: initial!important;
    font-weight: bold;
    text-decoration: none;
@@ -15,7 +15,7 @@ If your plugin does not need CSS, delete this file.
    font-variant:initial;
  }
 
- .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
+ .source-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
   color:var(--text-formatting);
  }
 
