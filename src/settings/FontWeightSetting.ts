@@ -9,8 +9,8 @@ class FontWeightSetting extends BaseSetting {
 			defaultValue: 'theme',
 			options: [
 				{ value: 'theme', text: 'Theme default' },
-				{ value: 'normal', text: 'Normal' },
 				{ value: 'light', text: 'Light' },
+				{ value: 'normal', text: 'Normal' },
 				{ value: 'semibold', text: 'Semi-bold' },
 				{ value: 'bold', text: 'Bold' },
 				{ value: 'custom', text: 'Custom' }

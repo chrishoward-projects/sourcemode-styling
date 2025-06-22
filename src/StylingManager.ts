@@ -48,13 +48,13 @@ export class StylingManager {
 			const container = containers.find(c => c !== null);
 			if (!container) return;
 			
-			const modeClasses = ["obsidian-mode-raw"];
+			const modeClasses = ["source-mode-raw"];
 			
 			// Remove all mode classes first
 			container.classList.remove(...modeClasses);
 
 			if (this.isInSourceMode()) {
-				container.classList.add("obsidian-mode-raw");
+				container.classList.add("source-mode-raw");
 			}
 			
 			updateInjectedStyle();
@@ -87,7 +87,7 @@ export class StylingManager {
 
 		const viewContent = document.querySelector('.workspace-split.mod-root .view-content');
 		if (viewContent) {
-			viewContent.classList.remove("obsidian-mode-raw");
+			viewContent.classList.remove("source-mode-raw");
 		}
 		StyleInjector.removeCSS();
 		

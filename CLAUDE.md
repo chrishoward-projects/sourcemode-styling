@@ -25,7 +25,7 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 
 - **Main plugin class** (`src/main.ts`): `SourceModeStyling` extends Obsidian's `Plugin` class
   - Manages CSS injection via dynamic `<style>` elements with ID `sourcemode-styling-font-style`
-  - Adds/removes `obsidian-mode-raw` class to document body based on active view state
+  - Adds/removes `.source-mode-raw` class to document body based on active view state
   - Listens to workspace events (`active-leaf-change`, `layout-change`) to update styling
 
 - **Settings system** (`src/settingsTab.ts` + `src/settings/`): Modular settings architecture
