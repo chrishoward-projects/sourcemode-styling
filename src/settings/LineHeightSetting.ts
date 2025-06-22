@@ -23,15 +23,15 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 	lineHeightInput.max = '2.5';
 	lineHeightInput.step = '0.05';
 	lineHeightInput.value = isLineHeightCustom ? plugin.settings.lineHeight.toString() : '1.75';
-	if (!isLineHeightCustom) lineHeightInput.style.display = 'none';
+	if (!isLineHeightCustom) lineHeightInput.className = 'settings-input-hidden';
 	lineHeightSetting.controlEl.appendChild(lineHeightInput);
 	lineHeightModeSelect.addEventListener('change', async () => {
 		if (lineHeightModeSelect.value === 'custom') {
-			lineHeightInput.style.display = '';
+			lineHeightInput.className = '';
 			const num = parseFloat(lineHeightInput.value);
 			if (!isNaN(num)) plugin.settings.lineHeight = num;
 		} else {
-			lineHeightInput.style.display = 'none';
+			lineHeightInput.className = 'settings-input-hidden';
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(plugin.settings as any).lineHeight = 'theme';
 		}

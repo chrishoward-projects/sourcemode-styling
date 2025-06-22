@@ -85,17 +85,17 @@ export abstract class BaseSetting {
 			});
 		}
 
-		if (!isVisible) input.style.display = 'none';
+		if (!isVisible) input.className = 'settings-input-hidden';
 		return input;
 	}
 
 	private attachDropdownListeners(dropdown: HTMLSelectElement, input: HTMLInputElement): void {
 		dropdown.addEventListener('change', async () => {
 			if (dropdown.value === 'custom') {
-				input.style.display = '';
+				input.className = '';
 				this.setSettingValue(this.parseInputValue(input.value));
 			} else {
-				input.style.display = 'none';
+				input.className = 'settings-input-hidden';
 				this.setSettingValue(dropdown.value);
 			}
 			await this.saveAndTrigger();

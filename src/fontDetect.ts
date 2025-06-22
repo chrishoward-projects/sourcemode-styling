@@ -6,8 +6,7 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 	// Create test element
 	const testElement = document.createElement('span');
 	testElement.style.fontSize = testSize;
-	testElement.style.position = 'absolute';
-	testElement.style.left = '-99999px';
+	testElement.className = 'font-test-element';
 	testElement.textContent = testString;
 	
 	// Use provided container or fall back to document.body

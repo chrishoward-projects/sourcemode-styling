@@ -18,3 +18,14 @@ If your plugin does not need CSS, delete this file.
  .obsidian-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
   color:var(--text-formatting);
  }
+
+/* Font detection test element */
+.font-test-element {
+  position: absolute;
+  left: -99999px;
+}
+
+/* Settings UI components */
+.settings-input-hidden {
+  display: none;
+}
