@@ -28,8 +28,7 @@ class FontSizeSetting extends BaseSetting {
 
 	protected setSettingValue(value: string | number): void {
 		if (value === 'theme') {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(this.plugin.settings as any).fontSize = 'theme';
+			this.plugin.settings.fontSize = 'theme';
 		} else {
 			this.plugin.settings.fontSize = typeof value === 'number' ? value : parseInt(value.toString());
 		}

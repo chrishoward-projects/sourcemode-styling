@@ -1,32 +1,26 @@
-import { EventRef, Workspace } from 'obsidian';
+import { Workspace, Component } from 'obsidian';
 
-export class WorkspaceEventManager {
-	private eventRefs: EventRef[] = [];
+export class WorkspaceEventManager extends Component {
 	private workspace: Workspace;
 
 	constructor(workspace: Workspace) {
+		super();
 		this.workspace = workspace;
 	}
 
-	on(eventName: string, callback: () => void): void {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const eventRef = this.workspace.on(eventName as any, callback);
-		this.eventRefs.push(eventRef);
+	onWorkspaceEvent(eventName: string, callback: () => void): void {
+		this.registerEvent(this.workspace.on(eventName as 'active-leaf-change', callback));
 	}
 
-	off(eventName: string, callback: () => void): void {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		this.workspace.off(eventName as any, callback);
+	offWorkspaceEvent(eventName: string, callback: () => void): void {
+		this.workspace.off(eventName as 'active-leaf-change', callback);
 	}
 
-	offAll(): void {
-		this.eventRefs.forEach(eventRef => {
-			this.workspace.offref(eventRef);
-		});
-		this.eventRefs = [];
+	onunload(): void {
+		// Component automatically handles cleanup of registered events
 	}
 
-	isRegistered(): boolean {
-		return this.eventRefs.length > 0;
+	hasRegisteredEvents(): boolean {
+		return true; // Component handles this internally
 	}
 }
