@@ -23,6 +23,23 @@ If your plugin does not need CSS, delete this file.
 .font-test-element {
   position: absolute;
   left: -99999px;
+  font-size: 72px;
+}
+
+.font-test-monospace {
+  font-family: monospace;
+}
+
+.font-test-sansserif {
+  font-family: sans-serif;
+}
+
+.font-test-serif {
+  font-family: serif;
+}
+
+.font-test-custom {
+  font-family: var(--test-font-family);
 }
 
 /* Settings UI components */

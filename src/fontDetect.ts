@@ -1,11 +1,9 @@
 export function detectAvailableFonts(fontList: string[], containerEl?: HTMLElement): string[] {
 	const baseFonts = ['monospace', 'sans-serif', 'serif'];
 	const testString = "mmmmmmmmmmlli";
-	const testSize = "72px";
 
 	// Create test element
 	const testElement = document.createElement('span');
-	testElement.style.fontSize = testSize;
 	testElement.className = 'font-test-element';
 	testElement.textContent = testString;
 	
@@ -16,7 +14,7 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 	// Get baseline measurements
 	const baselines: {[key: string]: {width: number, height: number}} = {};
 	baseFonts.forEach(baseFont => {
-		testElement.style.fontFamily = baseFont;
+		testElement.className = `font-test-element font-test-${baseFont.replace(/[^a-z]/g, '')}`;
 		baselines[baseFont] = {
 			width: testElement.offsetWidth,
 			height: testElement.offsetHeight
@@ -28,7 +26,8 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 	fontList.forEach(font => {
 		let isAvailable = false;
 		baseFonts.forEach(baseFont => {
-			testElement.style.fontFamily = `"${font}", ${baseFont}`;
+			testElement.style.setProperty('--test-font-family', `"${font}", ${baseFont}`);
+			testElement.className = `font-test-element font-test-custom`;
 			const dimensions = {
 				width: testElement.offsetWidth,
 				height: testElement.offsetHeight
