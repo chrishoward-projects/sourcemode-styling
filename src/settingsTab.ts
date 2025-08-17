@@ -22,8 +22,6 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		const header = containerEl.createEl("h2", {text: "Source mode styling"});
-		header.addClass("sourcemode-styling-header");
 
 		addEnableToggleSetting(containerEl, this.plugin);
 		addFontFamilySetting(containerEl, this.plugin);

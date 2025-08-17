@@ -24,10 +24,15 @@ if [ ! -f "main.js" ]; then
     npm run build
 fi
 
-if [ ! -f "main.js" ]; then
-    echo "Error: main.js not found after build"
-    exit 1
-fi
+# Verify all required files exist
+REQUIRED_FILES=("main.js" "manifest.json" "styles.css" "README.md" "LICENSE")
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "$file" ]; then
+        echo "Error: Required file $file not found"
+        exit 1
+    fi
+done
+echo "All required files verified"
 
 # Create git tag (without 'v' prefix)
 echo "Creating git tag: $CURRENT_VERSION"
@@ -37,7 +42,13 @@ git push origin-projects "$CURRENT_VERSION"
 # Create release zip
 ZIP_NAME="${PLUGIN_NAME}-${CURRENT_VERSION}.zip"
 echo "Creating release zip: $ZIP_NAME"
-zip -r "$ZIP_NAME" main.js manifest.json styles.css README.md LICENSE 2>/dev/null || true
+zip -r "$ZIP_NAME" main.js manifest.json styles.css README.md LICENSE
+
+# Verify zip was created successfully
+if [ ! -f "$ZIP_NAME" ]; then
+    echo "Error: Failed to create release zip"
+    exit 1
+fi
 
 # Create GitHub release using gh CLI
 echo "Creating GitHub release..."
