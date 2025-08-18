@@ -38,9 +38,7 @@ If your plugin does not need CSS, delete this file.
   font-family: serif;
 }
 
-.font-test-custom {
-  font-family: var(--test-font-family);
-}
+/* Dynamic font test classes will be injected here */
 
 /* Settings UI components */
 .settings-input-hidden {

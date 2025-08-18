@@ -25,9 +25,21 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 	const availableFonts: string[] = [];
 	fontList.forEach(font => {
 		let isAvailable = false;
+		
+		// Create a unique class name for this font test
+		const sanitizedFontName = font.replace(/[^a-zA-Z0-9]/g, '');
+		const testClassName = `font-test-dynamic-${sanitizedFontName}`;
+		
+		// Create style element for this font test
+		const styleEl = document.createElement('style');
+		styleEl.id = `font-detect-${sanitizedFontName}`;
+		
 		baseFonts.forEach(baseFont => {
-			testElement.style.setProperty('--test-font-family', `"${font}", ${baseFont}`);
-			testElement.className = `font-test-element font-test-custom`;
+			// Inject CSS rule for this specific font test
+			styleEl.textContent = `.${testClassName} { font-family: "${font}", ${baseFont}; }`;
+			document.head.appendChild(styleEl);
+			
+			testElement.className = `font-test-element ${testClassName}`;
 			const dimensions = {
 				width: testElement.offsetWidth,
 				height: testElement.offsetHeight
@@ -38,6 +50,9 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 				dimensions.height !== baselines[baseFont].height) {
 				isAvailable = true;
 			}
+			
+			// Clean up the style element
+			document.head.removeChild(styleEl);
 		});
 
 		if (isAvailable || font === 'monospace') {
