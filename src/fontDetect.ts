@@ -23,19 +23,17 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 
 	// Test each font
 	const availableFonts: string[] = [];
+	const testClassName = 'font-test-current';
+	
+	// Create reusable style element
+	const styleEl = document.createElement('style');
+	styleEl.id = 'font-detect-test';
+	
 	fontList.forEach(font => {
 		let isAvailable = false;
 		
-		// Create a unique class name for this font test
-		const sanitizedFontName = font.replace(/[^a-zA-Z0-9]/g, '');
-		const testClassName = `font-test-dynamic-${sanitizedFontName}`;
-		
-		// Create style element for this font test
-		const styleEl = document.createElement('style');
-		styleEl.id = `font-detect-${sanitizedFontName}`;
-		
 		baseFonts.forEach(baseFont => {
-			// Inject CSS rule for this specific font test
+			// Inject CSS rule for this font test
 			styleEl.textContent = `.${testClassName} { font-family: "${font}", ${baseFont}; }`;
 			document.head.appendChild(styleEl);
 			

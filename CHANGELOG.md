@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.16] - 2025-08-18
 
+## [0.2.18] - 2025-08-18
+
+## Changed:
+- Simplified font detection to use single reusable class name instead of unique names per font
+
 ## [0.2.17] - 2025-08-18
 
 ## Fixed:
