@@ -7,40 +7,40 @@ If your plugin does not need CSS, delete this file.
 
 */
 
- .source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
-   font-size: initial!important;
-   font-weight: bold;
-   text-decoration: none;
-   text-transform: unset;
-   font-variant:initial;
- }
+.source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+	font-size: initial !important;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: unset;
+	font-variant: initial;
+}
 
- .source-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
-  color:var(--text-formatting);
- }
+.source-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
+	color: var(--text-formatting);
+}
 
 /* Font detection test element */
 .font-test-element {
-  position: absolute;
-  left: -99999px;
-  font-size: 72px;
+	position: absolute;
+	left: -99999px;
+	font-size: 72px;
 }
 
 .font-test-monospace {
-  font-family: monospace;
+	font-family: monospace;
 }
 
 .font-test-sansserif {
-  font-family: sans-serif;
+	font-family: sans-serif;
 }
 
 .font-test-serif {
-  font-family: serif;
+	font-family: serif;
 }
 
 /* Dynamic font test classes will be injected here */
 
 /* Settings UI components */
-.settings-input-hidden {
-  display: none;
+.source-mode-source-mode-settings-input-hidden {
+	display: none;
 }

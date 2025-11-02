@@ -85,7 +85,7 @@ export abstract class BaseSetting {
 			});
 		}
 
-		if (!isVisible) input.className = 'settings-input-hidden';
+		if (!isVisible) input.className = 'source-mode-settings-input-hidden';
 		return input;
 	}
 
@@ -95,7 +95,7 @@ export abstract class BaseSetting {
 				input.className = '';
 				this.setSettingValue(this.parseInputValue(input.value));
 			} else {
-				input.className = 'settings-input-hidden';
+				input.className = 'source-mode-settings-input-hidden';
 				this.setSettingValue(dropdown.value);
 			}
 			await this.saveAndTrigger();

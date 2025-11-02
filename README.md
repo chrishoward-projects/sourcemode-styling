@@ -154,6 +154,10 @@ Contributions are welcome! Please see our [development documentation](CLAUDE.md)
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
+## Requirements
+
+- Minimumum verified on Obsidian 1.9.x
+
 ## License
 
 MIT License © Chris Howard 2025

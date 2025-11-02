@@ -23,7 +23,7 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 	lineHeightInput.max = '2.5';
 	lineHeightInput.step = '0.05';
 	lineHeightInput.value = isLineHeightCustom ? plugin.settings.lineHeight.toString() : '1.75';
-	if (!isLineHeightCustom) lineHeightInput.className = 'settings-input-hidden';
+	if (!isLineHeightCustom) lineHeightInput.className = 'source-mode-settings-input-hidden';
 	lineHeightSetting.controlEl.appendChild(lineHeightInput);
 	lineHeightModeSelect.addEventListener('change', async () => {
 		if (lineHeightModeSelect.value === 'custom') {
@@ -31,7 +31,7 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 			const num = parseFloat(lineHeightInput.value);
 			if (!isNaN(num)) plugin.settings.lineHeight = num;
 		} else {
-			lineHeightInput.className = 'settings-input-hidden';
+			lineHeightInput.className = 'source-mode-settings-input-hidden';
 			plugin.settings.lineHeight = 'theme';
 		}
 		await plugin.saveSettings();
