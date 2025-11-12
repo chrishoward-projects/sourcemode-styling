@@ -1,22 +1,20 @@
-import { MarkdownView, App, EventRef } from 'obsidian';
+import { MarkdownView, App, Plugin } from 'obsidian';
 import { CSSGenerator } from './CSSGenerator';
 import { StyleInjector } from './StyleInjector';
 import type { SourceModeStylingSettings } from './main';
 
 export class StylingManager {
 	private app: App;
+	private plugin: Plugin;
 	private settings: SourceModeStylingSettings;
 	private isEnabled = false;
-	
-	// Event handlers and observers
-	private updateBodyModeClass?: () => void;
-	private updateInjectedStyle?: () => void;
-	private activeLeafChangeHandler?: EventRef;
-	private layoutChangeHandler?: EventRef;
-	private classCheckInterval?: number;
 
-	constructor(app: App, settings: SourceModeStylingSettings) {
+	// Callback functions
+	private updateInjectedStyle?: () => void;
+
+	constructor(app: App, plugin: Plugin, settings: SourceModeStylingSettings) {
 		this.app = app;
+		this.plugin = plugin;
 		this.settings = settings;
 	}
 
@@ -44,40 +42,45 @@ export class StylingManager {
 				document.querySelector('.workspace-leaf'),
 				document.body
 			];
-			
+
 			const container = containers.find(c => c !== null);
 			if (!container) return;
-			
+
 			const modeClasses = ["source-mode-raw"];
-			
+
 			// Remove all mode classes first
 			container.classList.remove(...modeClasses);
 
 			if (this.isInSourceMode()) {
 				container.classList.add("source-mode-raw");
 			}
-			
+
 			updateInjectedStyle();
 		};
 
-		this.updateBodyModeClass = updateViewModeClass;
 		this.updateInjectedStyle = updateInjectedStyle;
 
-		// Register workspace event listeners - these fire when views are created/switched
-		this.activeLeafChangeHandler = this.app.workspace.on("active-leaf-change", () => {
-			// Use setTimeout to ensure DOM is fully rendered
-			setTimeout(updateViewModeClass, 50);
-		});
-		
-		this.layoutChangeHandler = this.app.workspace.on("layout-change", () => {
-			setTimeout(updateViewModeClass, 50);
-		});
+		// Register workspace event listeners using plugin.registerEvent() for proper lifecycle management
+		this.plugin.registerEvent(
+			this.app.workspace.on("active-leaf-change", () => {
+				// Use setTimeout to ensure DOM is fully rendered
+				setTimeout(updateViewModeClass, 50);
+			})
+		);
+
+		this.plugin.registerEvent(
+			this.app.workspace.on("layout-change", () => {
+				setTimeout(updateViewModeClass, 50);
+			})
+		);
 
 		// Also listen for file-open which fires when a markdown file is opened
-		this.app.workspace.on("file-open", () => {
-			setTimeout(updateViewModeClass, 100);
-		});
-		
+		this.plugin.registerEvent(
+			this.app.workspace.on("file-open", () => {
+				setTimeout(updateViewModeClass, 100);
+			})
+		);
+
 		this.isEnabled = true;
 		updateViewModeClass();
 	}
@@ -90,27 +93,10 @@ export class StylingManager {
 			viewContent.classList.remove("source-mode-raw");
 		}
 		StyleInjector.removeAllVariables();
-		
-		// Clean up interval (if any)
-		if (this.classCheckInterval) {
-			clearInterval(this.classCheckInterval);
-			this.classCheckInterval = undefined;
-		}
-		
-		// Clean up event listeners
-		if (this.activeLeafChangeHandler && this.updateBodyModeClass) {
-			this.app.workspace.off("active-leaf-change", this.updateBodyModeClass);
-		}
-		if (this.layoutChangeHandler && this.updateBodyModeClass) {
-			this.app.workspace.off("layout-change", this.updateBodyModeClass);
-		}
 
-		// Reset handlers
-		this.updateBodyModeClass = undefined;
+		// Reset callback
 		this.updateInjectedStyle = undefined;
-		this.activeLeafChangeHandler = undefined;
-		this.layoutChangeHandler = undefined;
-		
+
 		this.isEnabled = false;
 	}
 

@@ -31,9 +31,9 @@ export default class SourceModeStyling extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		
+
 		// Initialize styling manager
-		this.stylingManager = new StylingManager(this.app, this.settings);
+		this.stylingManager = new StylingManager(this.app, this, this.settings);
 
 		// Add settings tab
 		this.addSettingTab(new SourceModeStylingSettingTab(this.app, this));
