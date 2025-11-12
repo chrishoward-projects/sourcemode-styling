@@ -1,13 +1,12 @@
-import { PluginSettingTab, App } from 'obsidian';
-import type SourceModeStyling from './main';
-import { addFontFamilySetting } from './settings/FontFamilySetting';
-import { addFontSizeSetting } from './settings/FontSizeSetting';
-import { addLineHeightSetting } from './settings/LineHeightSetting';
-import { addFontColorSetting } from './settings/FontColorSetting';
-import { addHeadingColorSetting } from './settings/HeadingColorSetting';
-import { addBackgroundColorSetting } from './settings/BackgroundColorSetting';
-import { addFontWeightSetting } from './settings/FontWeightSetting';
-import { addEnableToggleSetting } from './settings/EnableToggleSetting';
+import { PluginSettingTab, App } from "obsidian";
+import type SourceModeStyling from "./main";
+import { addFontFamilySetting } from "./settings/FontFamilySetting";
+import { addFontSizeSetting } from "./settings/FontSizeSetting";
+import { addLineHeightSetting } from "./settings/LineHeightSetting";
+import { addFontColorSetting } from "./settings/FontColorSetting";
+import { addHeadingColorSetting } from "./settings/HeadingColorSetting";
+import { addBackgroundColorSetting } from "./settings/BackgroundColorSetting";
+import { addFontWeightSetting } from "./settings/FontWeightSetting";
 
 export class SourceModeStylingSettingTab extends PluginSettingTab {
 	plugin: SourceModeStyling;
@@ -18,12 +17,10 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
-
-		addEnableToggleSetting(containerEl, this.plugin);
 		addFontFamilySetting(containerEl, this.plugin);
 		addFontWeightSetting(containerEl, this.plugin);
 		addFontSizeSetting(containerEl, this.plugin);
@@ -32,4 +29,4 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		addHeadingColorSetting(containerEl, this.plugin);
 		addBackgroundColorSetting(containerEl, this.plugin);
 	}
-} 
+}
