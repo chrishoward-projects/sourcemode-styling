@@ -36,19 +36,18 @@ Source Mode Styling enhances Obsidian's source mode editor by applying monospace
 
 1. Open any markdown file in source mode
 2. Go to **Settings → Community plugins → Source Mode Styling**
-3. Toggle **Enable source mode styling** to see the immediate transformation
+3. Customize your font and styling preferences
 
 ### Configuration Options
 
-| Setting                        | Description                       | Options                                    |
-| ------------------------------ | --------------------------------- | ------------------------------------------ |
-| **Enable source mode styling** | Master toggle for the plugin      | On/Off                                     |
-| **Monospace font**             | Choose your preferred coding font | Auto-detected system fonts + theme default |
-| **Font size**                  | Adjust text size for readability  | 9-20px or theme default                    |
-| **Font weight**                | Control text thickness            | Normal, Light, Semi-bold, Custom (100-900) |
-| **Line height**                | Adjust vertical spacing           | 1.0-2.5 or theme default                   |
-| **Heading colour**             | Customize heading appearance      | Custom colour picker or theme default       |
-| **Background colour**          | Set editor background             | Custom colour picker or theme default       |
+| Setting                | Description                       | Options                                    |
+| ---------------------- | --------------------------------- | ------------------------------------------ |
+| **Monospace font**     | Choose your preferred coding font | Auto-detected system fonts + theme default |
+| **Font size**          | Adjust text size for readability  | 9-20px or theme default                    |
+| **Font weight**        | Control text thickness            | Normal, Light, Semi-bold, Custom (100-900) |
+| **Line height**        | Adjust vertical spacing           | 1.0-2.5 or theme default                   |
+| **Heading colour**     | Customize heading appearance      | Custom colour picker or theme default      |
+| **Background colour**  | Set editor background             | Custom colour picker or theme default      |
 
 ### Font Detection
 
