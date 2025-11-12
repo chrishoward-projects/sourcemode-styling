@@ -24,19 +24,14 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 	// Test each font
 	const availableFonts: string[] = [];
 	const testClassName = 'font-test-current';
-	
-	// Create reusable style element
-	const styleEl = document.createElement('style');
-	styleEl.id = 'font-detect-test';
-	
+
 	fontList.forEach(font => {
 		let isAvailable = false;
-		
+
 		baseFonts.forEach(baseFont => {
-			// Inject CSS rule for this font test
-			styleEl.textContent = `.${testClassName} { font-family: "${font}", ${baseFont}; }`;
-			document.head.appendChild(styleEl);
-			
+			// Set CSS variable for font test
+			document.documentElement.style.setProperty('--font-detect-test-family', `"${font}", ${baseFont}`);
+
 			testElement.className = `font-test-element ${testClassName}`;
 			const dimensions = {
 				width: testElement.offsetWidth,
@@ -44,13 +39,13 @@ export function detectAvailableFonts(fontList: string[], containerEl?: HTMLEleme
 			};
 
 			// If dimensions changed, the font is available
-			if (dimensions.width !== baselines[baseFont].width || 
+			if (dimensions.width !== baselines[baseFont].width ||
 				dimensions.height !== baselines[baseFont].height) {
 				isAvailable = true;
 			}
-			
-			// Clean up the style element
-			document.head.removeChild(styleEl);
+
+			// Clean up the CSS variable
+			document.documentElement.style.removeProperty('--font-detect-test-family');
 		});
 
 		if (isAvailable || font === 'monospace') {

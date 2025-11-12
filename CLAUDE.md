@@ -24,7 +24,7 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 ### Core Structure
 
 - **Main plugin class** (`src/main.ts`): `SourceModeStyling` extends Obsidian's `Plugin` class
-  - Manages CSS injection via dynamic `<style>` elements with ID `sourcemode-styling-font-style`
+  - Manages styling via CSS custom properties (CSS variables) set on document.documentElement
   - Adds/removes `.source-mode-raw` class to document body based on active view state
   - Listens to workspace events (`active-leaf-change`, `layout-change`) to update styling
 
@@ -36,9 +36,11 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 ### Key Plugin Mechanics
 
 - **CSS Targeting**: Styles target `.source-mode-raw .markdown-source-view.mod-cm6` selectors
-- **Dynamic Styling**: CSS is generated and injected based on current settings values
+- **Dynamic Styling**: Uses CSS custom properties (variables) defined in styles.css, updated via `setProperty()` based on settings
+- **CSS Variables**: All dynamic values (font-family, font-size, colors, etc.) use CSS variables (e.g., `--sourcemode-font-family`)
 - **State Management**: Plugin tracks styling state with `styleListenersRegistered` flag
 - **View State Detection**: Checks if current view is MarkdownView in source mode to apply styling
+- **Font Detection**: Uses CSS variables to test font availability without creating dynamic style elements
 
 ### Development Notes
 

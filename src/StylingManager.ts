@@ -32,8 +32,8 @@ export class StylingManager {
 		if (this.isEnabled) return;
 
 		const updateInjectedStyle = () => {
-			const css = CSSGenerator.generateCSS(this.settings);
-			StyleInjector.injectCSS(css);
+			const variables = CSSGenerator.generateCSSVariables(this.settings);
+			StyleInjector.setCSSVariables(variables);
 		};
 
 		const updateViewModeClass = () => {
@@ -89,7 +89,7 @@ export class StylingManager {
 		if (viewContent) {
 			viewContent.classList.remove("source-mode-raw");
 		}
-		StyleInjector.removeCSS();
+		StyleInjector.removeAllVariables();
 		
 		// Clean up interval (if any)
 		if (this.classCheckInterval) {

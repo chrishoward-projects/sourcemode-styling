@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+
+## [0.2.20] - 2025-11-12
+
+### Changed
+- Refactored styling system to use CSS custom properties instead of dynamic style elements
+- Font detection now uses CSS variables instead of creating temporary style elements
+- StyleInjector rewritten to manage CSS variables via setProperty/removeProperty
+- CSSGenerator now returns CSS variable values instead of generating CSS strings
+- Improved Obsidian submission compliance by eliminating all dynamic style element creation
+
+## [0.2.19] - 2025-11-12
+
+## Changed
+ - Added MIT licence
+ - rename CSS style settings-input-hidden to source-mode-settings-input-hidden to mitigate conflicate with other plugins
+ - remove enable Source Mode Styling setting
+ - update minAppVersion to 1.9.14
+
+
 ## [0.2.18] - 2025-08-18
 
 ## Changed:

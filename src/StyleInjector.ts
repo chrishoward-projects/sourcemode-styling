@@ -1,21 +1,32 @@
-export class StyleInjector {
-	private static readonly STYLE_ID = "sourcemode-styling-font-style";
-	private static styleEl: HTMLStyleElement | null = null;
+import type { CSSVariables } from './CSSGenerator';
 
-	static injectCSS(css: string): void {
-		if (!this.styleEl) {
-			this.styleEl = document.createElement("style");
-			this.styleEl.id = this.STYLE_ID;
-			document.head.appendChild(this.styleEl);
+export class StyleInjector {
+	private static appliedVariables: Set<string> = new Set();
+
+	static setCSSVariables(variables: CSSVariables): void {
+		const root = document.documentElement;
+
+		// Apply or update CSS variables
+		for (const [name, value] of Object.entries(variables)) {
+			if (value !== null) {
+				root.style.setProperty(name, value);
+				this.appliedVariables.add(name);
+			} else {
+				// Remove the variable if it's set to null (revert to theme default)
+				root.style.removeProperty(name);
+				this.appliedVariables.delete(name);
+			}
 		}
-		
-		this.styleEl.textContent = css;
 	}
 
-	static removeCSS(): void {
-		if (this.styleEl) {
-			this.styleEl.remove();
-			this.styleEl = null;
+	static removeAllVariables(): void {
+		const root = document.documentElement;
+
+		// Remove all CSS variables we've applied
+		for (const name of this.appliedVariables) {
+			root.style.removeProperty(name);
 		}
+
+		this.appliedVariables.clear();
 	}
 }

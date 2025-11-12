@@ -7,12 +7,23 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+/* Main source mode styling using CSS variables */
+.source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
+	font-family: var(--sourcemode-font-family);
+	font-size: var(--sourcemode-font-size);
+	line-height: var(--sourcemode-line-height);
+	color: var(--sourcemode-font-color);
+	background-color: var(--sourcemode-background-color);
+	font-weight: var(--sourcemode-font-weight);
+}
+
 .source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
 	font-size: initial !important;
 	font-weight: bold;
 	text-decoration: none;
 	text-transform: unset;
 	font-variant: initial;
+	color: var(--sourcemode-heading-color, inherit);
 }
 
 .source-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
@@ -38,7 +49,10 @@ If your plugin does not need CSS, delete this file.
 	font-family: serif;
 }
 
-/* Dynamic font test classes will be injected here */
+/* Dynamic font test using CSS variable */
+.font-test-current {
+	font-family: var(--font-detect-test-family, monospace);
+}
 
 /* Settings UI components */
 .source-mode-source-mode-settings-input-hidden {
