@@ -25,24 +25,28 @@ export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceMod
 	lineHeightInput.value = isLineHeightCustom ? plugin.settings.lineHeight.toString() : '1.75';
 	if (!isLineHeightCustom) lineHeightInput.className = 'source-mode-settings-input-hidden';
 	lineHeightSetting.controlEl.appendChild(lineHeightInput);
-	lineHeightModeSelect.addEventListener('change', async () => {
-		if (lineHeightModeSelect.value === 'custom') {
-			lineHeightInput.className = '';
-			const num = parseFloat(lineHeightInput.value);
-			if (!isNaN(num)) plugin.settings.lineHeight = num;
-		} else {
-			lineHeightInput.className = 'source-mode-settings-input-hidden';
-			plugin.settings.lineHeight = 'theme';
-		}
-		await plugin.saveSettings();
-		plugin.app.workspace.trigger('layout-change');
-	});
-	lineHeightInput.addEventListener('input', async () => {
-		if (lineHeightModeSelect.value === 'custom') {
-			const num = parseFloat(lineHeightInput.value);
-			if (!isNaN(num)) plugin.settings.lineHeight = num;
+	lineHeightModeSelect.addEventListener('change', () => {
+		void (async () => {
+			if (lineHeightModeSelect.value === 'custom') {
+				lineHeightInput.className = '';
+				const num = parseFloat(lineHeightInput.value);
+				if (!isNaN(num)) plugin.settings.lineHeight = num;
+			} else {
+				lineHeightInput.className = 'source-mode-settings-input-hidden';
+				plugin.settings.lineHeight = 'theme';
+			}
 			await plugin.saveSettings();
 			plugin.app.workspace.trigger('layout-change');
-		}
+		})();
+	});
+	lineHeightInput.addEventListener('input', () => {
+		void (async () => {
+			if (lineHeightModeSelect.value === 'custom') {
+				const num = parseFloat(lineHeightInput.value);
+				if (!isNaN(num)) plugin.settings.lineHeight = num;
+				await plugin.saveSettings();
+				plugin.app.workspace.trigger('layout-change');
+			}
+		})();
 	});
 } 

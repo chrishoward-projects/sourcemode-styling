@@ -35,7 +35,7 @@ class FontWeightSetting extends BaseSetting {
 		if (typeof value === 'number' || value === 'custom') {
 			this.plugin.settings.fontWeight = typeof value === 'number' ? value : 400;
 		} else {
-			this.plugin.settings.fontWeight = value as string;
+			this.plugin.settings.fontWeight = value;
 		}
 	}
 }

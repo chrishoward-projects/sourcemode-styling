@@ -5,13 +5,13 @@ import { StylingManager } from './StylingManager';
 
 export interface SourceModeStylingSettings {
 	rawModeEnabled: boolean;
-	fontFamily: string | 'theme';
+	fontFamily: string;
 	fontSize: number | 'theme';
 	lineHeight: number | 'theme';
-	fontColor: string | 'theme';
-	headingColor: string | 'theme';
-	backgroundColor: string | 'theme';
-	fontWeight: string | number | 'theme';
+	fontColor: string;
+	headingColor: string;
+	backgroundColor: string;
+	fontWeight: string | number;
 }
 
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.23] - 2026-01-04
+
+### Fixed
+- Removed redundant type unions from SourceModeStylingSettings interface where 'theme' string literal was incorrectly unioned with base string type
+- Simplified fontFamily, fontColor, headingColor, backgroundColor, and fontWeight types to match TypeScript's actual behaviour
+- Fixed Promise return warnings in event handlers by voiding async IIFEs in BaseSetting and LineHeightSetting
+- Removed unnecessary type assertion in FontWeightSetting where TypeScript already inferred the type through control flow analysis
+
 ## [0.2.22] - 2025-11-12
 
 ### Changed

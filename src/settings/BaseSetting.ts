@@ -55,9 +55,11 @@ export abstract class BaseSetting {
 			setting.controlEl.appendChild(input);
 			this.attachDropdownListeners(dropdown, input);
 		} else {
-			dropdown.addEventListener('change', async () => {
-				this.setSettingValue(dropdown.value);
-				await this.saveAndTrigger();
+			dropdown.addEventListener('change', () => {
+				void (async () => {
+					this.setSettingValue(dropdown.value);
+					await this.saveAndTrigger();
+				})();
 			});
 		}
 	}
@@ -90,26 +92,30 @@ export abstract class BaseSetting {
 	}
 
 	private attachDropdownListeners(dropdown: HTMLSelectElement, input: HTMLInputElement): void {
-		dropdown.addEventListener('change', async () => {
-			if (dropdown.value === 'custom') {
-				input.className = '';
-				this.setSettingValue(this.parseInputValue(input.value));
-			} else {
-				input.className = 'source-mode-settings-input-hidden';
-				this.setSettingValue(dropdown.value);
-			}
-			await this.saveAndTrigger();
+		dropdown.addEventListener('change', () => {
+			void (async () => {
+				if (dropdown.value === 'custom') {
+					input.className = '';
+					this.setSettingValue(this.parseInputValue(input.value));
+				} else {
+					input.className = 'source-mode-settings-input-hidden';
+					this.setSettingValue(dropdown.value);
+				}
+				await this.saveAndTrigger();
+			})();
 		});
 
 		this.attachInputListeners(input, dropdown);
 	}
 
 	private attachInputListeners(input: HTMLInputElement, dropdown?: HTMLSelectElement): void {
-		input.addEventListener('input', async () => {
-			if (!dropdown || dropdown.value === 'custom') {
-				this.setSettingValue(this.parseInputValue(input.value));
-				await this.saveAndTrigger();
-			}
+		input.addEventListener('input', () => {
+			void (async () => {
+				if (!dropdown || dropdown.value === 'custom') {
+					this.setSettingValue(this.parseInputValue(input.value));
+					await this.saveAndTrigger();
+				}
+			})();
 		});
 	}
 
