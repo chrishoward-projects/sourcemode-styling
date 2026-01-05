@@ -1,0 +1,2016 @@
+
+ * ▐▛███▜▌ *   Claude Code v2.0.76
+* ▝▜█████▛▘ *  Sonnet 4.5 · Claude Pro
+ *  ▘▘ ▝▝  *   ~/Obsidian/Development/.obsidian/plugins/sourcemode-styling
+
+> /ide 
+  ⎿  Connected to Visual Studio Code.
+
+> ObsidianReviewBot reports that lines 8,11,12,14 of main.ts "theme" is 
+overridden by string in this union type. Explain and suggest 
+
+⏺ I'll examine the main.ts file to understand the issue with "theme" being overridden by string in the union type.
+
+⏺ Read(src/main.ts)
+  ⎿  Read 73 lines
+
+⏺ I can see the TypeScript issue. Let me explain what's happening and suggest solutions.
+
+  ★ Insight ─────────────────────────────────────
+  The Problem: In TypeScript, 'theme' is a string literal type, which is already a subtype of string. When you write string | 'theme', TypeScript sees this as redundant because 'theme' is already covered by string. The union collapses to just string, losing any type narrowing benefits you might expect.
+
+  Why It Matters: You can't use type guards to distinguish between "theme" and other strings, and TypeScript won't help catch errors where you might accidentally use "theme" instead of a valid value.
+  ─────────────────────────────────────────────────
+
+  The Issue
+
+  On lines 8, 11, 12, and 14 of main.ts:148, you have union types like:
+  - fontFamily: string | 'theme'
+  - fontColor: string | 'theme'
+  - headingColor: string | 'theme'
+  - fontWeight: string | number | 'theme'
+
+  Since 'theme' is already a string, the | 'theme' part is redundant and gets "absorbed" by the broader string type.
+
+  Suggested Solutions
+
+  Option 1: Keep as-is with just string (Simplest)
+  Since TypeScript treats these as string anyway, just use string:
+
+  export interface SourceModeStylingSettings {
+      rawModeEnabled: boolean;
+      fontFamily: string;
+      fontSize: number | 'theme';
+      lineHeight: number | 'theme';
+      fontColor: string;
+      headingColor: string;
+      backgroundColor: string;
+      fontWeight: string | number;
+  }
+
+  Option 2: Use a branded type (Most type-safe)
+  Create a custom type that distinguishes "theme" from other strings:
+
+  type ThemeValue = 'theme';
+  type FontFamily = ThemeValue | (string & {});
+
+  Option 3: Add runtime validation (Practical approach)
+  Keep types simple but add helper functions to validate/check for "theme":
+
+  export const isThemeValue = (value: string | number): boolean => value === 'theme';
+
+  Which approach would you prefer? The first option is the most pragmatic and aligns with the "don't over-engineer" principle since you're already handling "theme" as a special string value in your runtime code.
+
+> what is 'theme' though? Why didn't it tell us to change lines 9 & 10 
+
+⏺ Great question! Let me look at how 'theme' is used in the codebase to explain what it means.
+
+⏺ Search(pattern: "theme", glob: "*.ts", output_mode: "content")
+  ⎿  Found 169 lines (ctrl+o to expand)
+
+⏺ Perfect! Now I can explain both questions:
+
+  ★ Insight ─────────────────────────────────────
+  What 'theme' means: The string literal 'theme' is a sentinel value meaning "don't override this setting - use the Obsidian theme's default". When a setting is set to 'theme', the plugin doesn't inject a CSS variable, allowing the active theme to control that aspect of styling.
+
+  Why different lines were flagged: TypeScript's union type behaviour depends on type compatibility:
+  - number | 'theme' ✓ Valid - creates a meaningful union (either a number OR the string 'theme')
+  - string | 'theme' ✗ Redundant - 'theme' is already covered by string, union collapses to just string
+  ─────────────────────────────────────────────────
+
+  What 'theme' Does
+
+  Looking at the code, when a setting equals 'theme':
+  1. CSSGenerator.ts:12-35 - Returns null for that CSS variable
+  2. StyleInjector.ts:15-17 - Removes the CSS variable from the DOM
+  3. Settings UI - Shows "Theme default" as an option in dropdowns
+
+  For example, if fontColor is set to 'theme', the plugin won't set --sourcemode-font-color, so your active Obsidian theme's colour scheme takes over.
+
+  Why Lines 9 & 10 Weren't Flagged
+
+  The linter only flagged lines where string | 'theme' appears:
+  - Line 8: fontFamily: string | 'theme' - Flagged (redundant)
+  - Line 9: fontSize: number | 'theme' - NOT flagged (valid union)
+  - Line 10: lineHeight: number | 'theme' - NOT flagged (valid union)
+  - Line 11: fontColor: string | 'theme' - Flagged (redundant)
+
+  Lines 9 & 10 are fine because they union number with 'theme' (a string). Since numbers and strings are different types, this creates a meaningful union that TypeScript can properly narrow.
+
+  Would you like me to fix the redundant type declarations on lines 8, 11, 12, and 14?
+
+> ok. fix per options 1 
+
+⏺ I'll fix the redundant type declarations by simplifying them to just use string where appropriate.
+
+⏺ Update(src/main.ts)
+  ⎿  Added 5 lines, removed 5 lines                                      
+       5                                                                 
+       6  export interface SourceModeStylingSettings {                   
+       7    rawModeEnabled: boolean;                                     
+       8 -  fontFamily: string | 'theme';                                
+       8 +  fontFamily: string;                                          
+       9    fontSize: number | 'theme';                                  
+      10    lineHeight: number | 'theme';                                
+      11 -  fontColor: string | 'theme';                                 
+      12 -  headingColor: string | 'theme';                              
+      13 -  backgroundColor: string | 'theme';                           
+      14 -  fontWeight: string | number | 'theme';                       
+      11 +  fontColor: string;                                           
+      12 +  headingColor: string;                                        
+      13 +  backgroundColor: string;                                     
+      14 +  fontWeight: string | number;                                 
+      15  }                                                              
+      16                                                                 
+      17  const DEFAULT_SETTINGS: SourceModeStylingSettings = {          
+
+⏺ Bash(npm run lint)
+  ⎿  > sourcemode-styling@0.2.22 lint
+     > eslint 'src/**/*.ts'
+
+⏺ Bash(npm run build)
+  ⎿  > sourcemode-styling@0.2.22 build                                
+     > tsc -noEmit -skipLibCheck && node esbuild.config.mjs production
+
+⏺ Done. I've fixed the redundant type declarations in main.ts:6-15.
+
+  ★ Insight ─────────────────────────────────────
+  What Changed: Removed the redundant | 'theme' from union types where the base type was already string. Since 'theme' is a string literal type, it's already covered by the broader string type.
+
+  Why This is Better: The types are now cleaner and match TypeScript's actual behaviour. The runtime code already handles 'theme' as a special string value through equality checks (e.g., value === 'theme'), so the type system just needs to accept strings.
+  ─────────────────────────────────────────────────
+
+  Changes Made
+
+  Updated the SourceModeStylingSettings interface:
+  - fontFamily: string | 'theme' → string
+  - fontColor: string | 'theme' → string
+  - headingColor: string | 'theme' → string
+  - backgroundColor: string | 'theme' → string
+  - fontWeight: string | number | 'theme' → string | number
+
+  Left unchanged (these were already correct):
+  - fontSize: number | 'theme' (valid union - number vs string)
+  - lineHeight: number | 'theme' (valid union - number vs string)
+
+  Both lint and build completed successfully with no errors. The changes are ready to test.
+
+> update changelog and commit 
+
+⏺ I'll update the changelog and commit the changes using the version management workflow.
+
+⏺ Read(CHANGELOG.md)
+  ⎿  Read 184 lines
+
+⏺ Bash(TZ=Australia/Melbourne date +"%Y-%m-%d")
+  ⎿  2026-01-04
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Added 6 lines                                                       
+       5  The format is based on [Keep a                                 
+          Changelog](https://keepachangelog.com/en/1.0.0/),              
+       6  and this project adheres to [Semantic                          
+          Versioning](https://semver.org/spec/v2.0.0.html).              
+       7                                                                 
+       8 +## [0.2.23] - 2026-01-04                                       
+       9 +                                                               
+      10 +### Fixed                                                      
+      11 +- Removed redundant type unions from SourceModeStylingSettings 
+         + interface where 'theme' string literal was incorrectly        
+         +unioned with base string type                                  
+      12 +- Simplified fontFamily, fontColor, headingColor,              
+         +backgroundColor, and fontWeight types to match TypeScript's    
+         +actual behaviour                                               
+      13 +                                                               
+      14  ## [0.2.22] - 2025-11-12                                       
+      15                                                                 
+      16  ### Changed                                                    
+
+⏺ Bash(npm run update-version)
+  ⎿  Interrupted · What should Claude do instead?
+
+> next. it say "Promise returned in function argument where a void return 
+was expected." for the following lines and files:\
+\
+BaseSetting.ts 58-61\\
+BaseSetting.ts 93-102\
+BaseSetting.ts 108-113\
+LineHeightSetting.ts 28-39\
+LineHeightSetting.ts 40-47\
+\
+Again, explain and suggest 
+
+⏺ I'll examine those files to understand the Promise/void return type issue.
+
+⏺ Read(src/settings/BaseSetting.ts)
+  ⎿  Read 140 lines
+
+⏺ Read(src/settings/LineHeightSetting.ts)
+  ⎿  Read 48 lines
+
+⏺ I can see the issue. Let me explain what's happening with these Promise return warnings.
+
+  ★ Insight ─────────────────────────────────────
+  The Problem: The addEventListener method expects callbacks that return void, but async functions always return Promise<void>. TypeScript/ESLint warns about this because the event handler signature doesn't expect promises.
+
+  Why It Works Anyway: Browsers ignore the return value from event handlers, so the promise gets discarded. However, this means any errors in the async operation won't be caught unless explicitly handled.
+  ─────────────────────────────────────────────────
+
+  The Issue
+
+  All the flagged lines are using async arrow functions as event handlers:
+
+  BaseSetting.ts:58-61
+  dropdown.addEventListener('change', async () => {
+      this.setSettingValue(dropdown.value);
+      await this.saveAndTrigger();
+  });
+
+  BaseSetting.ts:93-102
+  dropdown.addEventListener('change', async () => {
+      if (dropdown.value === 'custom') {
+          input.className = '';
+          this.setSettingValue(this.parseInputValue(input.value));
+      } else {
+          input.className = 'source-mode-settings-input-hidden';
+          this.setSettingValue(dropdown.value);
+      }
+      await this.saveAndTrigger();
+  });
+
+  Similar patterns in the other locations.
+
+  Suggested Solutions
+
+  Option 1: Void the promise explicitly (Recommended - maintains async/await pattern)
+  dropdown.addEventListener('change', () => {
+      void (async () => {
+          this.setSettingValue(dropdown.value);
+          await this.saveAndTrigger();
+      })();
+  });
+
+  Option 2: Extract to a separate async method and void it
+  dropdown.addEventListener('change', () => {
+      void this.handleDropdownChange(dropdown.value);
+  });
+
+  private async handleDropdownChange(value: string): Promise<void> {
+      this.setSettingValue(value);
+      await this.saveAndTrigger();
+  }
+
+  Option 3: Don't await - fire and forget (Simplest but loses error handling)
+  dropdown.addEventListener('change', () => {
+      this.setSettingValue(dropdown.value);
+      this.saveAndTrigger(); // Promise runs but not awaited
+  });
+
+  Which approach would you prefer? Option 1 is the quickest fix with minimal changes, while Option 2 is cleaner for complex handlers.
+
+> ok. implement option 1 
+
+⏺ I'll implement Option 1 to fix the Promise return warnings by voiding the promises explicitly.
+
+⏺ Update(src/settings/BaseSetting.ts)
+  ⎿  Added 5 lines, removed 3 lines                                      
+      55        setting.controlEl.appendChild(input);                    
+      56        this.attachDropdownListeners(dropdown, input);           
+      57      } else {                                                   
+      58 -      dropdown.addEventListener('change', async () => {        
+      59 -        this.setSettingValue(dropdown.value);                  
+      60 -        await this.saveAndTrigger();                           
+      58 +      dropdown.addEventListener('change', () => {              
+      59 +        void (async () => {                                    
+      60 +          this.setSettingValue(dropdown.value);                
+      61 +          await this.saveAndTrigger();                         
+      62 +        })();                                                  
+      63        });                                                      
+      64      }                                                          
+      65    }                                                            
+
+⏺ Update(src/settings/BaseSetting.ts)
+  ⎿  Added 11 lines, removed 9 lines                                     
+       92    }                                                           
+       93                                                                
+       94    private attachDropdownListeners(dropdown:                   
+           HTMLSelectElement, input: HTMLInputElement): void {           
+       95 -    dropdown.addEventListener('change', async () => {         
+       96 -      if (dropdown.value === 'custom') {                      
+       97 -        input.className = '';                                 
+       98 -                                                              
+          -this.setSettingValue(this.parseInputValue(input.value));      
+       99 -      } else {                                                
+      100 -        input.className =                                     
+          -'source-mode-settings-input-hidden';                          
+      101 -        this.setSettingValue(dropdown.value);                 
+      102 -      }                                                       
+      103 -      await this.saveAndTrigger();                            
+       95 +    dropdown.addEventListener('change', () => {               
+       96 +      void (async () => {                                     
+       97 +        if (dropdown.value === 'custom') {                    
+       98 +          input.className = '';                               
+       99 +                                                              
+          +this.setSettingValue(this.parseInputValue(input.value));      
+      100 +        } else {                                              
+      101 +          input.className =                                   
+          +'source-mode-settings-input-hidden';                          
+      102 +          this.setSettingValue(dropdown.value);               
+      103 +        }                                                     
+      104 +        await this.saveAndTrigger();                          
+      105 +      })();                                                   
+      106      });                                                       
+      107                                                                
+      108      this.attachInputListeners(input, dropdown);               
+
+⏺ Update(src/settings/BaseSetting.ts)
+  ⎿  Added 7 lines, removed 5 lines                                      
+      109    }                                                           
+      110                                                                
+      111    private attachInputListeners(input: HTMLInputElement,       
+           dropdown?: HTMLSelectElement): void {                         
+      112 -    input.addEventListener('input', async () => {             
+      113 -      if (!dropdown || dropdown.value === 'custom') {         
+      114 -                                                              
+          -this.setSettingValue(this.parseInputValue(input.value));      
+      115 -        await this.saveAndTrigger();                          
+      116 -      }                                                       
+      112 +    input.addEventListener('input', () => {                   
+      113 +      void (async () => {                                     
+      114 +        if (!dropdown || dropdown.value === 'custom') {       
+      115 +                                                              
+          +this.setSettingValue(this.parseInputValue(input.value));      
+      116 +          await this.saveAndTrigger();                        
+      117 +        }                                                     
+      118 +      })();                                                   
+      119      });                                                       
+      120    }                                                           
+      121                                                                
+
+⏺ Update(src/settings/LineHeightSetting.ts)
+  ⎿  Added 13 lines, removed 11 lines                                    
+      25    lineHeightInput.value = isLineHeightCustom ?                 
+          plugin.settings.lineHeight.toString() : '1.75';                
+      26    if (!isLineHeightCustom) lineHeightInput.className =         
+          'source-mode-settings-input-hidden';                           
+      27    lineHeightSetting.controlEl.appendChild(lineHeightInput);    
+      28 -  lineHeightModeSelect.addEventListener('change', async () => {
+      29 -    if (lineHeightModeSelect.value === 'custom') {             
+      30 -      lineHeightInput.className = '';                          
+      31 -      const num = parseFloat(lineHeightInput.value);           
+      32 -      if (!isNaN(num)) plugin.settings.lineHeight = num;       
+      33 -    } else {                                                   
+      34 -      lineHeightInput.className =                              
+         -'source-mode-settings-input-hidden';                           
+      35 -      plugin.settings.lineHeight = 'theme';                    
+      36 -    }                                                          
+      37 -    await plugin.saveSettings();                               
+      38 -    plugin.app.workspace.trigger('layout-change');             
+      28 +  lineHeightModeSelect.addEventListener('change', () => {      
+      29 +    void (async () => {                                        
+      30 +      if (lineHeightModeSelect.value === 'custom') {           
+      31 +        lineHeightInput.className = '';                        
+      32 +        const num = parseFloat(lineHeightInput.value);         
+      33 +        if (!isNaN(num)) plugin.settings.lineHeight = num;     
+      34 +      } else {                                                 
+      35 +        lineHeightInput.className =                            
+         +'source-mode-settings-input-hidden';                           
+      36 +        plugin.settings.lineHeight = 'theme';                  
+      37 +      }                                                        
+      38 +      await plugin.saveSettings();                             
+      39 +      plugin.app.workspace.trigger('layout-change');           
+      40 +    })();                                                      
+      41    });                                                          
+      42    lineHeightInput.addEventListener('input', async () => {      
+      43      if (lineHeightModeSelect.value === 'custom') {             
+
+⏺ Update(src/settings/LineHeightSetting.ts)
+  ⎿  Added 9 lines, removed 7 lines                                      
+      39        plugin.app.workspace.trigger('layout-change');           
+      40      })();                                                      
+      41    });                                                          
+      42 -  lineHeightInput.addEventListener('input', async () => {      
+      43 -    if (lineHeightModeSelect.value === 'custom') {             
+      44 -      const num = parseFloat(lineHeightInput.value);           
+      45 -      if (!isNaN(num)) plugin.settings.lineHeight = num;       
+      46 -      await plugin.saveSettings();                             
+      47 -      plugin.app.workspace.trigger('layout-change');           
+      48 -    }                                                          
+      42 +  lineHeightInput.addEventListener('input', () => {            
+      43 +    void (async () => {                                        
+      44 +      if (lineHeightModeSelect.value === 'custom') {           
+      45 +        const num = parseFloat(lineHeightInput.value);         
+      46 +        if (!isNaN(num)) plugin.settings.lineHeight = num;     
+      47 +        await plugin.saveSettings();                           
+      48 +        plugin.app.workspace.trigger('layout-change');         
+      49 +      }                                                        
+      50 +    })();                                                      
+      51    });                                                          
+      52  }                                                              
+      53   No newline at end of file                                     
+
+⏺ Bash(npm run lint)
+  ⎿  > sourcemode-styling@0.2.22 lint
+     > eslint 'src/**/*.ts'
+
+⏺ Bash(npm run build)
+  ⎿  > sourcemode-styling@0.2.22 build                                
+     > tsc -noEmit -skipLibCheck && node esbuild.config.mjs production
+
+⏺ Done. I've fixed all the Promise return warnings in both files.
+
+  ★ Insight ─────────────────────────────────────
+  The Fix: Wrapped each async arrow function in an immediately-invoked function expression (IIFE) and voided it. This satisfies TypeScript's requirement that event handlers return void while still allowing the async operations to run.
+
+  Pattern Applied: Changed addEventListener('event', async () => { ... }) to addEventListener('event', () => { void (async () => { ... })(); }). The outer function returns void, while the inner async function runs independently.
+  ─────────────────────────────────────────────────
+
+  Changes Made
+
+  BaseSetting.ts - Fixed 3 event listeners:
+  - Line 58-63: Dropdown change handler (simple)
+  - Line 95-106: Dropdown change handler (with custom value logic)
+  - Line 112-119: Input event handler
+
+  LineHeightSetting.ts - Fixed 2 event listeners:
+  - Line 28-41: Line height mode select change handler
+  - Line 42-51: Line height input event handler
+
+  Both lint and build completed successfully with no errors. The changes are ready to test.
+
+> Update changelog 
+
+⏺ I'll update the changelog with the Promise return warning fixes.
+
+⏺ Read(CHANGELOG.md)
+  ⎿  Read 20 lines
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Added 1 line                                                        
+      10  ### Fixed                                                      
+      11  - Removed redundant type unions from SourceModeStylingSettings 
+           interface where 'theme' string literal was incorrectly        
+          unioned with base string type                                  
+      12  - Simplified fontFamily, fontColor, headingColor,              
+          backgroundColor, and fontWeight types to match TypeScript's    
+          actual behaviour                                               
+      13 +- Fixed Promise return warnings in event handlers by voiding   
+         +async IIFEs in BaseSetting and LineHeightSetting               
+      14                                                                 
+      15  ## [0.2.22] - 2025-11-12                                       
+      16                                                                 
+
+⏺ Done. I've updated the CHANGELOG.md to include the Promise return warning fixes.
+
+  ★ Insight ─────────────────────────────────────
+  Changelog Strategy: Since both fixes (redundant type unions and Promise warnings) are related TypeScript compliance improvements made in the same session, I've grouped them together under version 0.2.23 rather than creating a new version entry.
+  ─────────────────────────────────────────────────
+
+  Updated Entry
+
+  Added to version 0.2.23:
+  - Fixed Promise return warnings in event handlers by voiding async IIFEs in BaseSetting and LineHeightSetting
+
+  The changelog is ready for the version bump and commit when you're ready to proceed.
+
+> And lastly, it say "This assertion is unnecessary since it does not change
+ the type of the expression." in regards to \
+FontWeightSetting.ts line 38 
+
+⏺ I'll examine FontWeightSetting.ts to see the unnecessary assertion issue.
+
+⏺ Read(src/settings/FontWeightSetting.ts)
+  ⎿  Read 45 lines
+
+⏺ I can see the issue. Let me explain what's happening with the unnecessary type assertion.
+
+  ★ Insight ─────────────────────────────────────
+  The Problem: On line 38, the code uses value as string to assert that value is a string. However, TypeScript's control flow analysis has already narrowed the type to string because:
+  1. Line 35 checks if value is NOT a number
+  2. Line 35 also checks if value is NOT 'custom'
+  3. In the else block, TypeScript knows value must be a string
+
+  Why the assertion is redundant: The as string doesn't change anything - TypeScript already knows value is a string at that point, making the assertion unnecessary.
+  ─────────────────────────────────────────────────
+
+  The Issue
+
+  FontWeightSetting.ts:38
+  protected setSettingValue(value: string | number): void {
+      if (typeof value === 'number' || value === 'custom') {
+          this.plugin.settings.fontWeight = typeof value === 'number' ? value : 400;
+      } else {
+          this.plugin.settings.fontWeight = value as string; // Unnecessary assertion
+      }
+  }
+
+  By the time we reach the else block, TypeScript has already determined that value must be a string (since it's not a number and not 'custom').
+
+  Solution
+
+  Simply remove the as string assertion:
+
+  this.plugin.settings.fontWeight = value;
+
+  Should I fix this?
+
+> yes 
+
+⏺ I'll remove the unnecessary type assertion from FontWeightSetting.ts.
+
+⏺ Update(src/settings/FontWeightSetting.ts)
+  ⎿  Added 1 line, removed 1 line                                        
+      35      if (typeof value === 'number' || value === 'custom') {     
+      36        this.plugin.settings.fontWeight = typeof value ===       
+          'number' ? value : 400;                                        
+      37      } else {                                                   
+      38 -      this.plugin.settings.fontWeight = value as string;       
+      38 +      this.plugin.settings.fontWeight = value;                 
+      39      }                                                          
+      40    }                                                            
+      41  }                                                              
+
+⏺ Bash(npm run lint)
+  ⎿  > sourcemode-styling@0.2.22 lint
+     > eslint 'src/**/*.ts'
+
+⏺ Bash(npm run build)
+  ⎿  > sourcemode-styling@0.2.22 build                                
+     > tsc -noEmit -skipLibCheck && node esbuild.config.mjs production
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Added 1 line                                                        
+      11  - Removed redundant type unions from SourceModeStylingSettings 
+           interface where 'theme' string literal was incorrectly        
+          unioned with base string type                                  
+      12  - Simplified fontFamily, fontColor, headingColor,              
+          backgroundColor, and fontWeight types to match TypeScript's    
+          actual behaviour                                               
+      13  - Fixed Promise return warnings in event handlers by voiding   
+          async IIFEs in BaseSetting and LineHeightSetting               
+      14 +- Removed unnecessary type assertion in FontWeightSetting      
+         +where TypeScript already inferred the type through control     
+         +flow analysis                                                  
+      15                                                                 
+      16  ## [0.2.22] - 2025-11-12                                       
+      17                                                                 
+
+⏺ Done. I've removed the unnecessary type assertion from FontWeightSetting.ts and updated the changelog.
+
+  ★ Insight ─────────────────────────────────────
+  What Changed: Removed as string from line 38 since TypeScript's control flow narrowing already determined that value must be a string in the else block. The type assertion was redundant and didn't provide any additional type safety.
+
+  TypeScript's Intelligence: This is a good example of TypeScript's sophisticated type narrowing. After checking typeof value === 'number' and value === 'custom' in the if condition, TypeScript automatically knows that in the else block, value can only be a string.
+  ─────────────────────────────────────────────────
+
+  Changes Made
+
+  FontWeightSetting.ts:38
+  - Changed: this.plugin.settings.fontWeight = value as string;
+  - To: this.plugin.settings.fontWeight = value;
+
+  Both lint and build completed successfully with no errors. The CHANGELOG.md has been updated with all three TypeScript compliance fixes under version 0.2.23. The changes are ready to test.
+
+> ok. that's all the changes bump version and commit 
+
+⏺ I'll bump the version and commit all the TypeScript compliance fixes.
+
+⏺ Bash(npm run update-version)
+  ⎿  > sourcemode-styling@0.2.22 update-version                       
+     > npm version patch --no-git-tag-version && node version-bump.mjs
+     … +10 lines (ctrl+o to expand)
+
+⏺ Read(CHANGELOG.md)
+  ⎿  Read 30 lines
+
+⏺ I notice the version-bump script created a duplicate entry for 0.2.22. Let me fix the changelog ordering before committing.
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Removed 3 lines                                                     
+       5  The format is based on [Keep a                                 
+          Changelog](https://keepachangelog.com/en/1.0.0/),              
+       6  and this project adheres to [Semantic                          
+          Versioning](https://semver.org/spec/v2.0.0.html).              
+       7                                                                 
+       8 -                                                               
+       9 -## [0.2.22] - 2026-01-04                                       
+      10 -                                                               
+       8  ## [0.2.23] - 2026-01-04                                       
+       9                                                                 
+      10  ### Fixed                                                      
+
+⏺ Bash(git status)
+  ⎿  On branch main                                        
+     Your branch is up to date with 'origin-projects/main'.
+     … +16 lines (ctrl+o to expand)
+
+⏺ Bash(git add -A)
+  ⎿  (No content)
+
+⏺ Bash(git commit -m "Fix TypeScript compliance issues…)
+  ⎿  [main d81ba0a] Fix TypeScript compliance issues    
+      8 files changed, 64 insertions(+), 45 deletions(-)
+
+⏺ Bash(git log -1 --stat)
+  ⎿  commit d81ba0ab0f59f3e98534a5deac36a0c1b2a6e3bb    
+     Author: chrishoward-projects <chrish2077@gmail.com>
+     Date:   Sun Jan 4 20:37:29 2026 +1100
+     … +24 lines (ctrl+o to expand)
+
+⏺ Done. Version bumped to 0.2.23 and all changes committed.
+
+  ★ Insight ─────────────────────────────────────
+  What Was Fixed: Three categories of TypeScript compliance issues were resolved:
+  1. Redundant union types - Removed | 'theme' where it was already covered by string
+  2. Promise return warnings - Wrapped async event handlers in void IIFEs to satisfy type signatures
+  3. Unnecessary assertion - Let TypeScript's control flow analysis do its job instead of explicit casting
+  ─────────────────────────────────────────────────
+
+  Commit Summary
+
+  Version: 0.2.22 → 0.2.23
+
+  Files Changed (8 files, 64 insertions, 45 deletions):
+  - CHANGELOG.md - Updated with all fixes
+  - package.json, package-lock.json - Version bump
+  - versions.json - Version tracking
+  - src/main.ts - Fixed interface type unions
+  - src/settings/BaseSetting.ts - Fixed 3 Promise return warnings
+  - src/settings/FontWeightSetting.ts - Removed unnecessary assertion
+  - src/settings/LineHeightSetting.ts - Fixed 2 Promise return warnings
+
+  Commit: d81ba0a - "Fix TypeScript compliance issues"
+
+  All TypeScript/ESLint warnings from ObsidianReviewBot have been resolved. The changes are ready to test.
+
+> /ide 
+  ⎿  Connected to Visual Studio Code.
+
+> deploy 
+
+⏺ I'll deploy the plugin to your test vault.
+
+⏺ Bash(npm run deploy)
+  ⎿  > sourcemode-styling@0.2.23 deploy
+     > ./deploy.sh
+     … +2 lines (ctrl+o to expand)
+
+⏺ Done. The plugin has been deployed to your test vault.
+
+  ★ Insight ─────────────────────────────────────
+  Deployment Complete: The updated plugin (version 0.2.23) with all TypeScript compliance fixes has been copied to your APRIL test vault. The changes are purely code quality improvements and shouldn't affect the plugin's behaviour - all the fixes address type system issues that the linter flagged.
+  ─────────────────────────────────────────────────
+
+  Deployed to: /Users/chrishoward/Obsidian/APRIL/.obsidian/plugins/sourcemode-styling
+
+  The plugin is ready to test in your APRIL vault. You may need to reload Obsidian or disable/re-enable the plugin to pick up the changes.
+
+> When I go to this plugin's settings, it takes a few seconds befor ehtey 
+appear. That is because it's loading the fonts. Suggestions on how we can 
+reduce that loading time? 
+
+⏺ I'll examine the font detection code to understand what's causing the delay and suggest optimizations.
+
+⏺ Read(src/fontDetect.ts)
+  ⎿  Read 60 lines
+
+⏺ Read(src/settings/FontFamilySetting.ts)
+  ⎿  Read 47 lines
+
+⏺ Read(src/constants.ts)
+  ⎿  Read 12 lines
+
+⏺ I can see the issue. The font detection is testing 38 fonts against 3 baseline fonts synchronously, causing 114+ DOM measurements when the settings tab opens. Let me suggest several optimization strategies.
+
+  ★ Insight ─────────────────────────────────────
+  The Bottleneck: Font detection tests 38 fonts × 3 baselines = 114 DOM reflows. Each offsetWidth/offsetHeight call forces a layout recalculation, blocking the UI thread. This happens synchronously when settings open, causing the noticeable delay.
+
+  Why It's Slow: DOM reflows are expensive operations. The browser must calculate the layout for each font test, and doing this 100+ times sequentially creates a multi-second delay.
+  ─────────────────────────────────────────────────
+
+  Optimization Strategies
+
+  Option 1: Cache Detection Results (Recommended - Simple & Effective)
+  - Run font detection once on plugin load or first settings access
+  - Store available fonts in plugin settings
+  - Add a "Refresh Fonts" button for users who install new fonts
+  - Reduces settings load from seconds to instant (after first run)
+
+  Option 2: Lazy Load on Dropdown Click
+  - Don't detect fonts until user clicks the font dropdown
+  - Show "Loading fonts..." while detecting
+  - Settings open instantly, only delay when actually selecting font
+
+  Option 3: Use Font Loading API (Modern Approach)
+  - Use document.fonts.check() instead of DOM measurements
+  - Much faster, no reflows needed
+  - Fallback to current method for older browsers
+
+  Option 4: Reduce Font List
+  - Only test 10-15 most popular fonts by default
+  - Add "Show all fonts" option that triggers full detection
+  - Balances speed with comprehensiveness
+
+  Option 5: Combination Approach (Best UX)
+  - Cache results in settings
+  - Lazy load on first access
+  - Use Font Loading API when available
+  - Add manual refresh option
+
+  Which approach would you prefer? I'd suggest Option 5 (combination) for the best user experience, or Option 1 (caching) if you want a quick, simple fix.
+
+> ok. LEt's go with option 5 
+
+⏺ I'll implement Option 5 - the combination approach for optimal performance. This is a multi-file change with some architectural decisions, so let me enter plan mode to design the implementation.
+                                                                   
+⏺ Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+⏺ I'm in plan mode. Let me explore the codebase to understand the current architecture and design the optimal implementation for cached font detection with lazy loading and a refresh option.
+
+⏺ 2 Explore agents finished (ctrl+o to expand)
+   ├─ Explore settings persistence · 9 tool uses · 22.0k tokens
+   │  ⎿  Done
+   └─ Explore settings tab UI · 14 tool uses · 27.3k tokens
+      ⎿  Done
+
+⏺ Excellent. I've explored the codebase and understand the architecture. Now let me design the implementation plan.
+
+⏺ Plan(Design font detection optimization)
+  ⎿  Done (10 tool uses · 32.3k tokens · 2m 13s)                           
+
+⏺ Excellent. I have a comprehensive plan from the Plan agent. Now let me review the critical files to verify the implementation approach aligns with the existing code structure.
+
+⏺ Read(src/constants.ts)
+  ⎿  Read 12 lines
+
+⏺ Read(styles.css)
+  ⎿  Read 61 lines
+
+⏺ Perfect. I've reviewed the plan and the codebase. The implementation approach is solid and follows the existing patterns. Now let me write the final plan file.
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ Perfect. I've created a comprehensive implementation plan that covers all aspects of Option 5. The plan is structured to be both scannable and executable, with clear steps for each file modification.
+  ⎿  Tool use rejected with user message: Save that plan!
+
+⏺ The plan has been saved to /Users/chrishoward/.claude/plans/silly-toasting-wozniak.md. Now exiting plan mode to proceed with implementation.
+  ⎿ Tool use rejected with user message: What is the name of the file you saved 
+    that plan to?
+
+
+⏺ The plan has been saved to:
+
+  /Users/chrishoward/.claude/plans/silly-toasting-wozniak.md
+
+  This file contains the complete implementation plan for optimizing font detection performance using the combination approach (Option 5).
+
+> ok. that's a silly place to save it! Please save it IN THIS PROJECT! And 
+give it a sensible name 
+
+⏺ You're absolutely right. Let me save it in the project directory with a proper name.
+
+⏺ Reading Plan(~/.claude/plans/silly-toasting-wozniak.md)
+  ⎿  Read 266 lines
+
+⏺ Write(FONT_DETECTION_OPTIMIZATION.md)
+  ⎿  Wrote 266 lines to FONT_DETECTION_OPTIMIZATION.md                     
+     # Font Detection Performance Optimization (Option 5)
+     ## Goal
+     Optimize font detection to eliminate 2-3 second delay when opening
+     settings by implementing:
+     1. Cache detection results in settings
+     2. Lazy load fonts asynchronously with loading state
+     3. Use modern Font Loading API with DOM fallback
+     4. Add manual "Refresh Fonts" button
+     ## Current Problem
+     … +256 lines (ctrl+o to expand)
+
+⏺ Perfect. The plan has been saved to the project directory as:
+
+  FONT_DETECTION_OPTIMIZATION.md
+
+  This matches the naming convention of other documentation files in the project like CLAUDE.md and CHANGELOG.md.
+  ⎿  User rejected Claude's plan:
+     ╭─────────────────────────────────────────────────────────────────────────╮
+     │ Font Detection Performance Optimization (Option 5)                      │
+     │                                                                         │
+     │ Goal                                                                    │
+     │                                                                         │
+     │ Optimize font detection to eliminate 2-3 second delay when opening      │
+     │ settings by implementing:                                               │
+     │ 1. Cache detection results in settings                                  │
+     │ 2. Lazy load fonts asynchronously with loading state                    │
+     │ 3. Use modern Font Loading API with DOM fallback                        │
+     │ 4. Add manual "Refresh Fonts" button                                    │
+     │                                                                         │
+     │ Current Problem                                                         │
+     │                                                                         │
+     │ - 38 fonts × 3 baselines = 114+ synchronous DOM reflows                 │
+     │ - Settings tab freezes for 2-3 seconds on every open                    │
+     │ - Font detection runs in FontFamilySetting constructor every time       │
+     │                                                                         │
+     │ Implementation Steps                                                    │
+     │                                                                         │
+     │ 1. Extend Settings Schema                                               │
+     │                                                                         │
+     │ File: src/main.ts                                                       │
+     │                                                                         │
+     │ Add to SourceModeStylingSettings interface (after line 14):             │
+     │ cachedAvailableFonts?: {                                                │
+     │     fonts: string[];                                                    │
+     │     fontListHash: string;  // Detects MONOSPACE_FONTS changes           │
+     │     timestamp: number;     // Future use for expiration                 │
+     │ };                                                                      │
+     │                                                                         │
+     │ Do NOT add to DEFAULT_SETTINGS - leave undefined for auto-detection on  │
+     │ first load.                                                             │
+     │                                                                         │
+     │ 2. Enhance Font Detection                                               │
+     │                                                                         │
+     │ File: src/fontDetect.ts                                                 │
+     │                                                                         │
+     │ Add three new functions:                                                │
+     │                                                                         │
+     │ a) Hash utility (for cache validation):                                 │
+     │ export function hashFontList(fonts: string[]): string {                 │
+     │     return fonts.join('|').split('').reduce((hash, char) => {           │
+     │         return ((hash << 5) - hash) + char.charCodeAt(0) | 0;           │
+     │     }, 0).toString(36);                                                 │
+     │ }                                                                       │
+     │                                                                         │
+     │ b) Async detection with Font Loading API:                               │
+     │ export async function detectAvailableFontsAsync(                        │
+     │     fontList: string[],                                                 │
+     │     containerEl?: HTMLElement                                           │
+     │ ): Promise<string[]> {                                                  │
+     │     // Use document.fonts.check() if available (Chrome 35+, Firefox     │
+     │ 41+, Safari 10+)                                                        │
+     │     if ('fonts' in document && 'check' in document.fonts) {             │
+     │         return detectWithFontLoadingAPI(fontList);                      │
+     │     }                                                                   │
+     │     // Fallback to chunked DOM measurement                              │
+     │     return detectWithDOMMeasurement(fontList, containerEl);             │
+     │ }                                                                       │
+     │                                                                         │
+     │ c) Font Loading API implementation:                                     │
+     │ async function detectWithFontLoadingAPI(fontList: string[]):            │
+     │ Promise<string[]> {                                                     │
+     │     const availableFonts: string[] = [];                                │
+     │     const chunkSize = 10;                                               │
+     │                                                                         │
+     │     for (let i = 0; i < fontList.length; i += chunkSize) {              │
+     │         const chunk = fontList.slice(i, i + chunkSize);                 │
+     │                                                                         │
+     │         for (const font of chunk) {                                     │
+     │             try {                                                       │
+     │                 if (document.fonts.check(`12px "${font}"`) || font ===  │
+     │ 'monospace') {                                                          │
+     │                     availableFonts.push(font);                          │
+     │                 }                                                       │
+     │             } catch (e) {                                               │
+     │                 console.debug(`Font check failed for ${font}:`, e);     │
+     │             }                                                           │
+     │         }                                                               │
+     │                                                                         │
+     │         await new Promise(resolve => setTimeout(resolve, 0)); // Yield  │
+     │ to UI                                                                   │
+     │     }                                                                   │
+     │                                                                         │
+     │     return availableFonts;                                              │
+     │ }                                                                       │
+     │                                                                         │
+     │ d) Chunked DOM measurement (refactor existing logic):                   │
+     │ async function detectWithDOMMeasurement(                                │
+     │     fontList: string[],                                                 │
+     │     containerEl?: HTMLElement                                           │
+     │ ): Promise<string[]> {                                                  │
+     │     // Same algorithm as existing detectAvailableFonts() but:           │
+     │     // - Wrapped in async function                                      │
+     │     // - Process in chunks of 10                                        │
+     │     // - await setTimeout(0) between chunks                             │
+     │     // - try/finally for cleanup                                        │
+     │ }                                                                       │
+     │                                                                         │
+     │ Keep existing detectAvailableFonts() as synchronous fallback.           │
+     │                                                                         │
+     │ 3. Create Font Cache Module                                             │
+     │                                                                         │
+     │ File: src/fontCache.ts (NEW)                                            │
+     │                                                                         │
+     │ Create cache management utilities:                                      │
+     │                                                                         │
+     │ import type { SourceModeStylingSettings } from './main';                │
+     │ import { MONOSPACE_FONTS } from './constants';                          │
+     │ import { hashFontList, detectAvailableFontsAsync } from './fontDetect'; │
+     │                                                                         │
+     │ export interface FontCacheResult {                                      │
+     │     fonts: string[];                                                    │
+     │     isFromCache: boolean;                                               │
+     │ }                                                                       │
+     │                                                                         │
+     │ export function isCacheValid(settings: SourceModeStylingSettings):      │
+     │ boolean {                                                               │
+     │     if (!settings.cachedAvailableFonts) return false;                   │
+     │     const currentHash = hashFontList(MONOSPACE_FONTS);                  │
+     │     return settings.cachedAvailableFonts.fontListHash === currentHash;  │
+     │ }                                                                       │
+     │                                                                         │
+     │ export async function getAvailableFonts(                                │
+     │     settings: SourceModeStylingSettings,                                │
+     │     saveSettings: () => Promise<void>,                                  │
+     │     containerEl?: HTMLElement                                           │
+     │ ): Promise<FontCacheResult> {                                           │
+     │     // Return from cache if valid                                       │
+     │     if (isCacheValid(settings)) {                                       │
+     │         return {                                                        │
+     │             fonts: [...settings.cachedAvailableFonts!.fonts],           │
+     │             isFromCache: true                                           │
+     │         };                                                              │
+     │     }                                                                   │
+     │                                                                         │
+     │     // Detect and cache                                                 │
+     │     const fonts = await detectAvailableFontsAsync(MONOSPACE_FONTS,      │
+     │ containerEl);                                                           │
+     │                                                                         │
+     │     settings.cachedAvailableFonts = {                                   │
+     │         fonts: fonts,                                                   │
+     │         fontListHash: hashFontList(MONOSPACE_FONTS),                    │
+     │         timestamp: Date.now()                                           │
+     │     };                                                                  │
+     │                                                                         │
+     │     await saveSettings();                                               │
+     │                                                                         │
+     │     return { fonts: [...fonts], isFromCache: false };                   │
+     │ }                                                                       │
+     │                                                                         │
+     │ export function invalidateFontCache(settings:                           │
+     │ SourceModeStylingSettings): void {                                      │
+     │     delete settings.cachedAvailableFonts;                               │
+     │ }                                                                       │
+     │                                                                         │
+     │ 4. Refactor Font Family Setting                                         │
+     │                                                                         │
+     │ File: src/settings/FontFamilySetting.ts                                 │
+     │                                                                         │
+     │ Complete rewrite to support lazy loading and refresh:                   │
+     │                                                                         │
+     │ Key changes:                                                            │
+     │ - Override render() instead of using BaseSetting's auto-rendering       │
+     │ - Create dropdown with "Loading fonts..." initial state (disabled)      │
+     │ - Load fonts asynchronously via getAvailableFonts()                     │
+     │ - Populate dropdown when fonts load                                     │
+     │ - Add inline "Refresh Fonts" button                                     │
+     │ - Handle refresh by invalidating cache and re-detecting                 │
+     │                                                                         │
+     │ Structure:                                                              │
+     │ class FontFamilySetting extends BaseSetting {                           │
+     │     private availableFonts: string[] = [];                              │
+     │     private dropdown: HTMLSelectElement | null = null;                  │
+     │     private refreshButton: HTMLButtonElement | null = null;             │
+     │                                                                         │
+     │     public render(): void {                                             │
+     │         // Create Setting with dropdown (disabled, showing "Loading     │
+     │ fonts...")                                                              │
+     │         // Create refresh button (hidden until loaded)                  │
+     │         // Call loadFontsAsync()                                        │
+     │     }                                                                   │
+     │                                                                         │
+     │     private async loadFontsAsync(): Promise<void> {                     │
+     │         // Call getAvailableFonts() from fontCache module               │
+     │         // Populate dropdown on success                                 │
+     │         // Show refresh button                                          │
+     │     }                                                                   │
+     │                                                                         │
+     │     private populateDropdown(): void {                                  │
+     │         // Clear loading state                                          │
+     │         // Add 'theme' option                                           │
+     │         // Add detected fonts                                           │
+     │         // Ensure current font included                                 │
+     │         // Attach change listener                                       │
+     │     }                                                                   │
+     │                                                                         │
+     │     private async handleRefresh(): Promise<void> {                      │
+     │         // Disable controls, show "Refreshing..."                       │
+     │         // Invalidate cache                                             │
+     │         // Re-detect fonts                                              │
+     │         // Update dropdown                                              │
+     │         // Re-enable controls                                           │
+     │     }                                                                   │
+     │ }                                                                       │
+     │                                                                         │
+     │ 5. Update Styles                                                        │
+     │                                                                         │
+     │ File: styles.css                                                        │
+     │                                                                         │
+     │ Add refresh button styling (after line 60):                             │
+     │ /* Settings UI components */                                            │
+     │ .source-mode-settings-input-hidden {                                    │
+     │     display: none;                                                      │
+     │ }                                                                       │
+     │                                                                         │
+     │ .setting-item-control button.mod-cta {                                  │
+     │     padding: 4px 12px;                                                  │
+     │     font-size: 13px;                                                    │
+     │     line-height: 1.4;                                                   │
+     │ }                                                                       │
+     │                                                                         │
+     │ Also fix typo on line 58: Change                                        │
+     │ .source-mode-source-mode-settings-input-hidden to                       │
+     │ .source-mode-settings-input-hidden                                      │
+     │                                                                         │
+     │ Performance Impact                                                      │
+     │                                                                         │
+     │ Before:                                                                 │
+     │ - Settings open: 2-3 seconds (blocked)                                  │
+     │ - 114+ synchronous DOM reflows                                          │
+     │                                                                         │
+     │ After:                                                                  │
+     │ - First load: ~500-1000ms (background, non-blocking)                    │
+     │ - Cached load: < 10ms (instant)                                         │
+     │ - Font Loading API: ~100-200ms (no reflows)                             │
+     │                                                                         │
+     │ Error Handling                                                          │
+     │                                                                         │
+     │ Graceful degradation at every level:                                    │
+     │ 1. Font Loading API unavailable → DOM measurement fallback              │
+     │ 2. Detection fails → Use full MONOSPACE_FONTS list                      │
+     │ 3. Cache corrupted → Invalidate and re-detect                           │
+     │ 4. Any error → Log to console, continue with defaults                   │
+     │                                                                         │
+     │ Migration Strategy                                                      │
+     │                                                                         │
+     │ No migration needed - automatic:                                        │
+     │ - Existing users: cachedAvailableFonts undefined → detect on first      │
+     │ settings open                                                           │
+     │ - New users: Same behavior                                              │
+     │ - Cache invalidation: Hash mismatch triggers auto re-detection          │
+     │                                                                         │
+     │ Critical Files                                                          │
+     │                                                                         │
+     │ 1. src/main.ts - Add cachedAvailableFonts to settings interface         │
+     │ 2. src/fontDetect.ts - Add async detection with Font Loading API        │
+     │ 3. src/fontCache.ts - NEW: Cache management utilities                   │
+     │ 4. src/settings/FontFamilySetting.ts - Refactor to lazy load with       │
+     │ refresh                                                                 │
+     │ 5. styles.css - Add button styling, fix typo                            │
+     │                                                                         │
+     │ Testing Checklist                                                       │
+     │                                                                         │
+     │ - Fresh install - fonts detect and cache                                │
+     │ - Cached load - instant dropdown population                             │
+     │ - Refresh button - re-detects fonts                                     │
+     │ - MONOSPACE_FONTS change - auto-invalidates cache                       │
+     │ - Font Loading API unavailable - falls back gracefully                  │
+     │ - Detection error - uses full font list as fallback                     │
+     ╰─────────────────────────────────────────────────────────────────────────╯
+
+> ok. before we do that, we've got a problem. On one of my installs, the 
+font change when I Switch to source view isn't applied. I thought it might 
+be a plugin conflict, but tested for that. Can we add debugging code that 
+can identify what is happening when it's meant to be applying the font 
+
+⏺ I'll add comprehensive debugging code to help identify why the font isn't being applied. Let me examine the current styling flow and add logging at key points.
+
+⏺ Read(src/StylingManager.ts)
+  ⎿  Read 118 lines
+
+⏺ Read(src/CSSGenerator.ts)
+  ⎿  Read 44 lines
+
+⏺ Read(src/StyleInjector.ts)
+  ⎿  Read 32 lines
+
+⏺ Update(src/main.ts)
+  ⎿  Added 1 line                                                        
+      12    headingColor: string;                                        
+      13    backgroundColor: string;                                     
+      14    fontWeight: string | number;                                 
+      15 +  debugMode: boolean;                                          
+      16  }                                                              
+      17                                                                 
+      18  const DEFAULT_SETTINGS: SourceModeStylingSettings = {          
+
+⏺ Update(src/main.ts)
+  ⎿  Added 2 lines, removed 1 line                                       
+      23    fontColor: "theme",                                          
+      24    headingColor: "#2d5b8c",                                     
+      25    backgroundColor: "theme",                                    
+      26 -  fontWeight: "theme"                                          
+      26 +  fontWeight: "theme",                                         
+      27 +  debugMode: false                                             
+      28  }                                                              
+      29                                                                 
+      30  export default class SourceModeStyling extends Plugin {        
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 6 lines                                                       
+      18      this.settings = settings;                                  
+      19    }                                                            
+      20                                                                 
+      21 +  private log(message: string, data?: unknown): void {         
+      22 +    if (this.settings.debugMode) {                             
+      23 +      console.log(`[SourceMode Debug] ${message}`, data !==    
+         +undefined ? data : '');                                        
+      24 +    }                                                          
+      25 +  }                                                            
+      26 +                                                               
+      27    updateSettings(settings: SourceModeStylingSettings) {        
+      28      this.settings = settings;                                  
+      29      // Trigger update if styling is currently enabled          
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 6 lines                                                       
+      25    }                                                            
+      26                                                                 
+      27    updateSettings(settings: SourceModeStylingSettings) {        
+      28 +    this.log('Settings updated', {                             
+      29 +      fontFamily: settings.fontFamily,                         
+      30 +      fontSize: settings.fontSize,                             
+      31 +      debugMode: settings.debugMode                            
+      32 +    });                                                        
+      33      this.settings = settings;                                  
+      34      // Trigger update if styling is currently enabled          
+      35      if (this.isEnabled && this.updateInjectedStyle) {          
+      36 +      this.log('Triggering style update due to settings        
+         +change');                                                      
+      37        this.updateInjectedStyle();                              
+      38      }                                                          
+      39    }                                                            
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 25 lines, removed 3 lines                                     
+      39    }                                                            
+      40                                                                 
+      41    enable() {                                                   
+      42 -    if (this.isEnabled) return;                                
+      42 +    if (this.isEnabled) {                                      
+      43 +      this.log('Enable called but already enabled');           
+      44 +      return;                                                  
+      45 +    }                                                          
+      46                                                                 
+      47 +    this.log('Enabling Source Mode Styling');                  
+      48 +                                                               
+      49      const updateInjectedStyle = () => {                        
+      50 +      this.log('Updating injected style');                     
+      51        const variables =                                        
+          CSSGenerator.generateCSSVariables(this.settings);              
+      52 +      this.log('Generated CSS variables', variables);          
+      53        StyleInjector.setCSSVariables(variables);                
+      54      };                                                         
+      55                                                                 
+      56      const updateViewModeClass = () => {                        
+      57 +      this.log('Updating view mode class');                    
+      58 +                                                               
+      59        // Try multiple selectors for the container that         
+          persists                                                       
+      60        const containers = [                                     
+      61          document.querySelector('.workspace-split.mod-root'),   
+     ...
+      56        ];                                                       
+      57                                                                 
+      58        const container = containers.find(c => c !== null);      
+      59 -      if (!container) return;                                  
+      59                                                                 
+      60 +      if (!container) {                                        
+      61 +        this.log('No container found');                        
+      62 +        return;                                                
+      63 +      }                                                        
+      64 +                                                               
+      65 +      const containerInfo = container === document.body ?      
+         +'document.body' : container.className;                         
+      66 +      this.log(`Using container: ${containerInfo}`);           
+      67 +                                                               
+      68        const modeClasses = ["source-mode-raw"];                 
+      69                                                                 
+      70        // Remove all mode classes first                         
+      71        container.classList.remove(...modeClasses);              
+      72                                                                 
+      73 -      if (this.isInSourceMode()) {                             
+      73 +      const inSourceMode = this.isInSourceMode();              
+      74 +      this.log(`Is in source mode: ${inSourceMode}`);          
+      75 +                                                               
+      76 +      if (inSourceMode) {                                      
+      77          container.classList.add("source-mode-raw");            
+      78 +        this.log('Added source-mode-raw class to container');  
+      79 +      } else {                                                 
+      80 +        this.log('Removed source-mode-raw class from           
+         +container');                                                   
+      81        }                                                        
+      82                                                                 
+      83        updateInjectedStyle();                                   
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 4 lines                                                       
+       97      // Register workspace event listeners using               
+           plugin.registerEvent() for proper lifecycle management        
+       98      this.plugin.registerEvent(                                
+       99        this.app.workspace.on("active-leaf-change", () => {     
+      100 +        this.log('Event: active-leaf-change');                
+      101          // Use setTimeout to ensure DOM is fully rendered     
+      102          setTimeout(updateViewModeClass, 50);                  
+      103        })                                                      
+     ...
+      104                                                                
+      105      this.plugin.registerEvent(                                
+      106        this.app.workspace.on("layout-change", () => {          
+      107 +        this.log('Event: layout-change');                     
+      108          setTimeout(updateViewModeClass, 50);                  
+      109        })                                                      
+      110      );                                                        
+     ...
+      111      // Also listen for file-open which fires when a markdown  
+           file is opened                                                
+      112      this.plugin.registerEvent(                                
+      113        this.app.workspace.on("file-open", () => {              
+      114 +        this.log('Event: file-open');                         
+      115          setTimeout(updateViewModeClass, 100);                 
+      116        })                                                      
+      117      );                                                        
+      118                                                                
+      119      this.isEnabled = true;                                    
+      120 +    this.log('Initial view mode update');                     
+      121      updateViewModeClass();                                    
+      122    }                                                           
+      123                                                                
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 19 lines, removed 4 lines                                     
+      124    }                                                           
+      125                                                                
+      126    disable() {                                                 
+      127 -    if (!this.isEnabled) return;                              
+      127 +    if (!this.isEnabled) {                                    
+      128 +      this.log('Disable called but already disabled');        
+      129 +      return;                                                 
+      130 +    }                                                         
+      131                                                                
+      132 +    this.log('Disabling Source Mode Styling');                
+      133 +                                                              
+      134      const viewContent =                                       
+           document.querySelector('.workspace-split.mod-root             
+           .view-content');                                              
+      135      if (viewContent) {                                        
+      136        viewContent.classList.remove("source-mode-raw");        
+      137 +      this.log('Removed source-mode-raw class from            
+          +view-content');                                               
+      138      }                                                         
+      139      StyleInjector.removeAllVariables();                       
+      140 +    this.log('Removed all CSS variables');                    
+      141                                                                
+      142      // Reset callback                                         
+      143      this.updateInjectedStyle = undefined;                     
+     ...
+      145    private isInSourceMode(): boolean {                         
+      146      // Check only the active markdown view - we only want     
+           styling for the currently active note                         
+      147      const activeView =                                        
+           this.app.workspace.getActiveViewOfType(MarkdownView);         
+      148 -                                                              
+      148 +                                                              
+      149      if (!activeView) {                                        
+      150 +      this.log('No active markdown view found');              
+      151        return false;                                           
+      152      }                                                         
+      153 -                                                              
+      153 +                                                              
+      154      const state = activeView.getState();                      
+      155 -    return state.source === true && state.mode === "source";  
+      155 +    this.log('Active view state', {                           
+      156 +      source: state.source,                                   
+      157 +      mode: state.mode,                                       
+      158 +      file: activeView.file?.path || 'no file'                
+      159 +    });                                                       
+      160 +                                                              
+      161 +    const isSourceMode = state.source === true && state.mode  
+          +=== "source";                                                 
+      162 +    return isSourceMode;                                      
+      163    }                                                           
+      164  }                                                             
+      165   No newline at end of file                                    
+
+⏺ Update(src/StyleInjector.ts)
+  ⎿  Added 26 lines                                                      
+       2                                                                 
+       3  export class StyleInjector {                                   
+       4    private static appliedVariables: Set<string> = new Set();    
+       5 +  private static debugMode = false;                            
+       6                                                                 
+       7 +  static setDebugMode(enabled: boolean): void {                
+       8 +    this.debugMode = enabled;                                  
+       9 +  }                                                            
+      10 +                                                               
+      11 +  private static log(message: string, data?: unknown): void {  
+      12 +    if (this.debugMode) {                                      
+      13 +      console.log(`[SourceMode StyleInjector] ${message}`,     
+         +data !== undefined ? data : '');                               
+      14 +    }                                                          
+      15 +  }                                                            
+      16 +                                                               
+      17    static setCSSVariables(variables: CSSVariables): void {      
+      18      const root = document.documentElement;                     
+      19 +    this.log('Setting CSS variables', variables);              
+      20                                                                 
+      21 +    const applied: string[] = [];                              
+      22 +    const removed: string[] = [];                              
+      23 +                                                               
+      24      // Apply or update CSS variables                           
+      25      for (const [name, value] of Object.entries(variables)) {   
+      26        if (value !== null) {                                    
+      27          root.style.setProperty(name, value);                   
+      28          this.appliedVariables.add(name);                       
+      29 +        applied.push(`${name}: ${value}`);                     
+      30        } else {                                                 
+      31          // Remove the variable if it's set to null (revert to  
+          theme default)                                                 
+      32          root.style.removeProperty(name);                       
+      33          this.appliedVariables.delete(name);                    
+      34 +        removed.push(name);                                    
+      35        }                                                        
+      36      }                                                          
+      37 +                                                               
+      38 +    if (applied.length > 0) {                                  
+      39 +      this.log('Applied variables', applied);                  
+      40 +    }                                                          
+      41 +    if (removed.length > 0) {                                  
+      42 +      this.log('Removed variables', removed);                  
+      43 +    }                                                          
+      44    }                                                            
+      45                                                                 
+      46    static removeAllVariables(): void {                          
+      47      const root = document.documentElement;                     
+      48                                                                 
+      49 +    this.log('Removing all CSS variables',                     
+         +Array.from(this.appliedVariables));                            
+      50 +                                                               
+      51      // Remove all CSS variables we've applied                  
+      52      for (const name of this.appliedVariables) {                
+      53        root.style.removeProperty(name);                         
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 1 line                                                        
+      16      this.app = app;                                            
+      17      this.plugin = plugin;                                      
+      18      this.settings = settings;                                  
+      19 +    StyleInjector.setDebugMode(settings.debugMode);            
+      20    }                                                            
+      21                                                                 
+      22    private log(message: string, data?: unknown): void {         
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 1 line                                                        
+      26    }                                                            
+      27                                                                 
+      28    updateSettings(settings: SourceModeStylingSettings) {        
+      29 +    StyleInjector.setDebugMode(settings.debugMode);            
+      30      this.log('Settings updated', {                             
+      31        fontFamily: settings.fontFamily,                         
+      32        fontSize: settings.fontSize,                             
+
+⏺ Read(src/settingsTab.ts)
+  ⎿  Read 33 lines
+
+⏺ Update(src/settingsTab.ts)
+  ⎿  Added 1 line, removed 1 line                                        
+      1 -import { PluginSettingTab, App } from "obsidian";               
+      1 +import { PluginSettingTab, App, Setting } from "obsidian";      
+      2  import type SourceModeStyling from "./main";                    
+      3  import { addFontFamilySetting } from                            
+         "./settings/FontFamilySetting";                                 
+      4  import { addFontSizeSetting } from                              
+         "./settings/FontSizeSetting";                                   
+
+⏺ Update(src/settingsTab.ts)
+  ⎿  Added 12 lines                                                      
+      28      addLineHeightSetting(containerEl, this.plugin);            
+      29      addHeadingColorSetting(containerEl, this.plugin);          
+      30      addBackgroundColorSetting(containerEl, this.plugin);       
+      31 +                                                               
+      32 +    // Debug mode toggle                                       
+      33 +    new Setting(containerEl)                                   
+      34 +      .setName('Debug mode')                                   
+      35 +      .setDesc('Enable debug logging to console (helpful for   
+         +troubleshooting styling issues)')                              
+      36 +      .addToggle(toggle => toggle                              
+      37 +        .setValue(this.plugin.settings.debugMode)              
+      38 +        .onChange(async (value) => {                           
+      39 +          this.plugin.settings.debugMode = value;              
+      40 +          await this.plugin.saveSettings();                    
+      41 +        })                                                     
+      42 +      );                                                       
+      43    }                                                            
+      44  }                                                              
+
+⏺ Bash(npm run lint)
+  ⎿  > sourcemode-styling@0.2.23 lint
+     > eslint 'src/**/*.ts'
+
+⏺ Bash(npm run build && npm run deploy)
+  ⎿  > sourcemode-styling@0.2.23 build                                
+     > tsc -noEmit -skipLibCheck && node esbuild.config.mjs production
+     … +6 lines (ctrl+o to expand)
+
+⏺ Done. I've added comprehensive debug logging to help diagnose the font application issue.
+
+  ★ Insight ─────────────────────────────────────
+  Debug Strategy: Added logging at every critical point in the styling flow - when events fire, when view state is checked, when CSS variables are generated, when the source-mode-raw class is added/removed, and when CSS variables are applied to the DOM. This will reveal exactly where the process fails.
+
+  Minimal Performance Impact: All debug logging is behind a debugMode flag that's off by default, so there's zero performance impact for users who don't need it.
+  ─────────────────────────────────────────────────
+
+  What Was Added
+
+  1. Debug Mode Setting
+
+  - New debugMode boolean in settings (default: false)
+  - Added toggle in settings UI with description
+
+  2. StylingManager Logging
+
+  Logs will show:
+  - When enable/disable is called
+  - Which workspace event fired (active-leaf-change, layout-change, file-open)
+  - What container element is being used for the class
+  - Whether the active view is detected as source mode
+  - The active view state (source, mode, file path)
+  - When the source-mode-raw class is added/removed
+  - When CSS variables are updated
+
+  3. StyleInjector Logging
+
+  Logs will show:
+  - What CSS variables are being set
+  - The actual values for each variable
+  - What variables are being removed (set to null for theme default)
+
+  How to Use
+
+  1. Reload Obsidian or disable/re-enable the plugin to pick up changes
+  2. Open plugin settings - you'll see a new "Debug mode" toggle at the bottom
+  3. Enable debug mode - turn on the toggle
+  4. Open browser console (Ctrl+Shift+I or Cmd+Option+I)
+  5. Switch between views - watch the console for [SourceMode Debug] messages
+
+  What to Look For
+
+  When you switch to source view on the install where the font isn't applying, check:
+
+  View Detection:
+  - Is the event firing? (should see "Event: active-leaf-change")
+  - Is source mode detected? (should see "Is in source mode: true")
+  - What's the view state? (should see source: true, mode: "source")
+
+  Class Application:
+  - Is the class being added? (should see "Added source-mode-raw class to container")
+  - What container is being used?
+
+  CSS Variables:
+  - Are variables being generated? (check the "Generated CSS variables" message)
+  - Is fontFamily set correctly? (should see "--sourcemode-font-family: 'Source Code Pro', monospace")
+  - Are variables being applied? (check "Applied variables" from StyleInjector)
+
+  This should pinpoint exactly where the process is failing. Share the console output and I can diagnose further.
+
+> Ok... Here's the console log. I have also compared it to a working install
+ and it's identical\
+\
+ON SWITCHING ON SOURCE VIEW
+===========================
+[SourceMode Debug] Event: layout-change 
+plugin:sourcemode-styling:6 [SourceMode Debug] Updating view mode class 
+plugin:sourcemode-styling:6 [SourceMode Debug] Using container: 
+workspace-split mod-vertical mod-root 
+plugin:sourcemode-styling:6 [SourceMode Debug] Active view state {source: 
+true, mode: 'source', file: 'PROJECTS/Writing/Medium/Religion/The Adamphant 
+in the room.md'}
+plugin:sourcemode-styling:6 [SourceMode Debug] Is in source mode: true 
+plugin:sourcemode-styling:6 [SourceMode Debug] Added source-mode-raw class 
+to container 
+plugin:sourcemode-styling:6 [SourceMode Debug] Updating injected style 
+plugin:sourcemode-styling:6 [SourceMode Debug] Generated CSS variables 
+{--sourcemode-font-family: '"Courier New", monospace', 
+--sourcemode-font-size: '15px', --sourcemode-line-height: '1.5', 
+--sourcemode-font-color: null, --sourcemode-heading-color: '#8b2d2d', …}
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Setting CSS variables
+ {--sourcemode-font-family: '"Courier New", monospace', 
+--sourcemode-font-size: '15px', --sourcemode-line-height: '1.5', 
+--sourcemode-font-color: null, --sourcemode-heading-color: '#8b2d2d', …}
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Applied variables 
+(5) ['--sourcemode-font-family: "Courier New", monospace', 
+'--sourcemode-font-size: 15px', '--sourcemode-line-height: 1.5', 
+'--sourcemode-heading-color: #8b2d2d', '--sourcemode-background-color: 
+#faf8f4']
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Removed variables 
+(2) ['--sourcemode-font-color', '--sourcemode-font-weight']
+
+ON SWITCHING OFF SOURCE VIEW
+===========================
+[SourceMode Debug] Event: layout-change 
+plugin:sourcemode-styling:6 [SourceMode Debug] Updating view mode class 
+plugin:sourcemode-styling:6 [SourceMode Debug] Using container: 
+workspace-split mod-vertical mod-root source-mode-raw 
+plugin:sourcemode-styling:6 [SourceMode Debug] Active view state {source: 
+false, mode: 'source', file: 'PROJECTS/Writing/Medium/Religion/The Adamphant
+ in the room.md'}
+plugin:sourcemode-styling:6 [SourceMode Debug] Is in source mode: false 
+plugin:sourcemode-styling:6 [SourceMode Debug] Removed source-mode-raw class
+ from container 
+plugin:sourcemode-styling:6 [SourceMode Debug] Updating injected style 
+plugin:sourcemode-styling:6 [SourceMode Debug] Generated CSS variables 
+{--sourcemode-font-family: '"Courier New", monospace', 
+--sourcemode-font-size: '15px', --sourcemode-line-height: '1.5', 
+--sourcemode-font-color: null, --sourcemode-heading-color: '#8b2d2d', …}
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Setting CSS variables
+ {--sourcemode-font-family: '"Courier New", monospace', 
+--sourcemode-font-size: '15px', --sourcemode-line-height: '1.5', 
+--sourcemode-font-color: null, --sourcemode-heading-color: '#8b2d2d', …}
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Applied variables 
+(5) ['--sourcemode-font-family: "Courier New", monospace', 
+'--sourcemode-font-size: 15px', '--sourcemode-line-height: 1.5', 
+'--sourcemode-heading-color: #8b2d2d', '--sourcemode-background-color: 
+#faf8f4']
+plugin:sourcemode-styling:6 [SourceMode StyleInjector] Removed variables 
+(2) ['--sourcemode-font-color', '--sourcemode-font-weight'] 
+
+⏺ Excellent detective work! The logging shows the plugin is working perfectly - the class is added, CSS variables are set. This means the issue isn't with the JavaScript logic, but with CSS application or specificity.
+
+  ★ Insight ─────────────────────────────────────
+  The Real Problem: The JavaScript is working correctly - it detects source mode, adds the class, and sets CSS variables. But the browser isn't applying the styles. This suggests either:
+  1. CSS selector doesn't match the actual DOM structure
+  2. Another plugin/theme has higher specificity
+  3. CSS file isn't loading or is being overridden
+  ─────────────────────────────────────────────────
+
+  Let me add deeper diagnostics that check the actual DOM and computed styles:
+
+⏺ Update(src/StylingManager.ts)
+  ⎿  Added 34 lines                                                      
+       87        if (inSourceMode) {                                     
+       88          container.classList.add("source-mode-raw");           
+       89          this.log('Added source-mode-raw class to container'); 
+       90 +                                                              
+       91 +        // Diagnostic: Check if class is actually in DOM and  
+          +CSS is applying                                               
+       92 +        setTimeout(() => {                                    
+       93 +          const hasClass =                                    
+          +container.classList.contains('source-mode-raw');              
+       94 +          this.log(`DOM check - source-mode-raw class         
+          +present: ${hasClass}`);                                       
+       95 +                                                              
+       96 +          // Check if CSS variables are accessible            
+       97 +          const rootStyle =                                   
+          +getComputedStyle(document.documentElement);                   
+       98 +          const fontFamily =                                  
+          +rootStyle.getPropertyValue('--sourcemode-font-family');       
+       99 +          this.log('CSS variable check', {                    
+      100 +            '--sourcemode-font-family': fontFamily || 'NOT    
+          +SET',                                                         
+      101 +            '--sourcemode-font-size':                         
+          +rootStyle.getPropertyValue('--sourcemode-font-size') || 'NOT  
+          +SET'                                                          
+      102 +          });                                                 
+      103 +                                                              
+      104 +          // Check actual computed style on the editor        
+      105 +          const editor =                                      
+          +document.querySelector('.source-mode-raw                      
+          +.markdown-source-view.mod-cm6 .cm-scroller');                 
+      106 +          if (editor) {                                       
+      107 +            const editorStyle = getComputedStyle(editor);     
+      108 +            this.log('Editor computed styles', {              
+      109 +              'font-family': editorStyle.fontFamily,          
+      110 +              'font-size': editorStyle.fontSize,              
+      111 +              'line-height': editorStyle.lineHeight           
+      112 +            });                                               
+      113 +          } else {                                            
+      114 +            this.log('Editor element not found with selector: 
+          + .source-mode-raw .markdown-source-view.mod-cm6               
+          +.cm-scroller');                                               
+      115 +                                                              
+      116 +            // Try to find what editor elements exist         
+      117 +            const allEditors =                                
+          +document.querySelectorAll('.markdown-source-view');           
+      118 +            this.log(`Found ${allEditors.length}              
+          +.markdown-source-view elements`);                             
+      119 +            allEditors.forEach((el, idx) => {                 
+      120 +              this.log(`Editor ${idx} classes:`,              
+          +el.className);                                                
+      121 +            });                                               
+      122 +          }                                                   
+      123 +        }, 100);                                              
+      124        } else {                                                
+      125          this.log('Removed source-mode-raw class from          
+           container');                                                  
+      126        }                                                       
+
+⏺ Bash(npm run build && npm run deploy)
+  ⎿  > sourcemode-styling@0.2.23 build                                
+     > tsc -noEmit -skipLibCheck && node esbuild.config.mjs production
+     … +6 lines (ctrl+o to expand)
+
+⏺ Perfect. I've added enhanced diagnostics that will reveal the real issue.
+
+  ★ Insight ─────────────────────────────────────
+  What the New Diagnostics Check: The enhanced logging now verifies not just what the JavaScript thinks it's doing, but what the browser is actually doing - checking if CSS variables are accessible, if the editor element matches the CSS selector, and what the actual computed font-family is on the editor.
+  ─────────────────────────────────────────────────
+
+  What to Do Next
+
+  1. Reload Obsidian or disable/re-enable the plugin
+  2. Switch to source view on the problematic install
+  3. Check the console for these new diagnostic messages:
+
+  Look for:
+  - DOM check - Is the class really there?
+  - CSS variable check - Are the variables accessible? (should show "Courier New", monospace)
+  - Editor computed styles - What font is the browser actually using?
+  - Editor element not found - If this appears, the CSS selector doesn't match the DOM
+
+  What Each Result Means
+
+  If "Editor element not found":
+  - The CSS selector .source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller doesn't match
+  - You'll see what editor classes actually exist
+  - Likely a DOM structure difference on that install
+
+  If variables show as "NOT SET":
+  - CSS variables aren't being applied to document.documentElement
+  - Possible issue with StyleInjector
+
+  If computed font-family doesn't match:
+  - CSS is being overridden by another style with higher specificity
+  - Another plugin or theme is interfering
+
+  Please share what these new diagnostics show - that will pinpoint the exact issue.
+
+> ok. That let me find the problem and fix it. For some reason, the font 
+overrides in appearance.json weren't being overidded by my plugin - even 
+though they were on other installs. So I manually hacked appearance.json 
+then restarted and even after re-adding them, my plugin is now working on 
+that install. I need a way to remember this, without making a note in the 
+readme 
+
+⏺ Perfect solution - let's add this to CLAUDE.md since that's specifically for development context and troubleshooting, not user-facing documentation.
+
+⏺ Read(CLAUDE.md)
+  ⎿  Read 82 lines
+
+⏺ Update(CLAUDE.md)
+  ⎿  Added 26 lines                                                      
+      49  - Uses TypeScript with strict null checks and inline source    
+          maps for development                                           
+      50  - Refer always to Obsidian Developer Dcoumentation             
+          @https://github.com/obsidianmd/obsidian-developer-docs         
+      51                                                                 
+      52 +### Troubleshooting                                            
+      53 +                                                               
+      54 +**Font Overrides Not Applying (appearance.json conflict)**     
+      55 +                                                               
+      56 +In rare cases, font settings in `.obsidian/appearance.json`    
+         +may prevent plugin CSS variables from being applied, even      
+         +though the plugin correctly:                                   
+      57 +- Detects source mode                                          
+      58 +- Adds the `source-mode-raw` class                             
+      59 +- Sets CSS variables on `document.documentElement`             
+      60 +                                                               
+      61 +**Symptoms:**                                                  
+      62 +- Debug mode shows all CSS variables being set correctly       
+      63 +- Computed styles on editor show Obsidian's default font       
+         +instead of plugin font                                         
+      64 +- Issue occurs on specific vaults but not others               
+      65 +                                                               
+      66 +**Root Cause:**                                                
+      67 +Font settings in `appearance.json` (particularly               
+         +`textFontFamily`, `monospaceFontFamily`) may have higher CSS   
+         +specificity or be applied later in the cascade, overriding the 
+         + plugin's CSS variables in certain Obsidian versions or        
+         +configurations.                                                
+      68 +                                                               
+      69 +**Resolution:**                                                
+      70 +1. Manually edit `.obsidian/appearance.json` to remove         
+         +font-related settings                                          
+      71 +2. Restart Obsidian                                            
+      72 +3. Reconfigure fonts through Settings > Appearance if needed   
+      73 +4. Plugin should now properly override fonts in source mode    
+      74 +                                                               
+      75 +**Prevention:**                                                
+      76 +The debug mode feature helps identify this issue by showing    
+         +actual computed styles versus expected styles. Enable "Debug   
+         +mode" in plugin settings and check browser console for         
+         +discrepancies between set variables and computed values.       
+      77 +                                                               
+      78  ### Obsidian Submission Compliance                             
+      79                                                                 
+      80  When making changes, ensure compliance with Obsidian           
+          submission guidelines:                                         
+
+⏺ Perfect. I've documented the issue in CLAUDE.md under a new Troubleshooting section. Now let me also add a strategic code comment in the CSS file where this could manifest:
+
+⏺ Update(styles.css)
+  ⎿  Added 4 lines, removed 1 line                                       
+       7                                                                 
+       8  */                                                             
+       9                                                                 
+      10 -/* Main source mode styling using CSS variables */             
+      10 +/* Main source mode styling using CSS variables                
+      11 +   NOTE: In rare cases, font settings in appearance.json may   
+         +override these variables.                                      
+      12 +   If fonts aren't applying despite CSS variables being set,   
+         +check appearance.json                                          
+      13 +   for textFontFamily/monospaceFontFamily settings. See        
+         +CLAUDE.md troubleshooting section. */                          
+      14  .source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {  
+      15    font-family: var(--sourcemode-font-family);                  
+      16    font-size: var(--sourcemode-font-size);                      
+
+⏺ Done. I've documented this issue in two places:
+
+  ★ Insight ─────────────────────────────────────
+  Documentation Strategy:
+  1. CLAUDE.md Troubleshooting Section - Detailed explanation with symptoms, root cause, and resolution steps. This is for development context and future debugging.
+  2. CSS Comment - Quick reference at the exact code location where the issue manifests, pointing to the full documentation.
+
+  This approach keeps the knowledge accessible without cluttering user-facing README documentation.
+  ─────────────────────────────────────────────────
+
+  What Was Added
+
+  1. CLAUDE.md Troubleshooting Section
+
+  - Documents the appearance.json font override issue
+  - Lists symptoms (debug shows correct values, computed styles don't match)
+  - Explains root cause (CSS specificity/cascade timing)
+  - Provides step-by-step resolution
+  - Notes that debug mode helps identify this issue
+
+  2. CSS File Comment
+
+  - Added NOTE comment above the main CSS selector
+  - Points to CLAUDE.md for full details
+  - Visible when editing styles.css
+
+  Now whenever you (or I) encounter this issue again, the knowledge is preserved in the project documentation. The debug mode feature we just added also makes it much easier to diagnose this specific problem in the future.
+
+  Should we commit these changes along with the debug mode feature?
+
+> excellent. Thank you.\
+\
+Can you hide the debug option. I don't wantit there unless we a future need 
+for it, but no point trashing the code sine it will be useful if necessary 
+
+⏺ Perfect idea. I'll comment out the debug toggle in the settings UI while keeping all the debug code intact.
+
+⏺ Update(src/settingsTab.ts)
+  ⎿  Added 4 lines, removed 1 line                                       
+      29      addHeadingColorSetting(containerEl, this.plugin);          
+      30      addBackgroundColorSetting(containerEl, this.plugin);       
+      31                                                                 
+      32 -    // Debug mode toggle                                       
+      32 +    // Debug mode toggle - Hidden but available for            
+         +troubleshooting                                                
+      33 +    // Uncomment to enable debug mode UI for diagnosing        
+         +styling issues                                                 
+      34 +    /*                                                         
+      35      new Setting(containerEl)                                   
+      36        .setName('Debug mode')                                   
+      37        .setDesc('Enable debug logging to console (helpful for   
+          troubleshooting styling issues)')                              
+     ...
+      40            await this.plugin.saveSettings();                    
+      41          })                                                     
+      42        );                                                       
+      43 +    */                                                         
+      44    }                                                            
+      45  }                                                              
+
+⏺ Update(CLAUDE.md)
+  ⎿  Added 7 lines                                                       
+      75  **Prevention:**                                                
+      76  The debug mode feature helps identify this issue by showing    
+          actual computed styles versus expected styles. Enable "Debug   
+          mode" in plugin settings and check browser console for         
+          discrepancies between set variables and computed values.       
+      77                                                                 
+      78 +**Activating Debug Mode:**                                     
+      79 +Debug logging code exists in StylingManager.ts and             
+         +StyleInjector.ts but the UI toggle is hidden by default. To    
+         +enable:                                                        
+      80 +1. Uncomment the debug mode toggle in `src/settingsTab.ts`     
+         +(lines 34-45)                                                  
+      81 +2. Rebuild the plugin with `npm run build`                     
+      82 +3. Toggle will appear in plugin settings                       
+      83 +4. Enable to see detailed console logs of styling operations   
+      84 +                                                               
+      85  ### Obsidian Submission Compliance                             
+      86                                                                 
+      87  When making changes, ensure compliance with Obsidian           
+          submission guidelines:                                         
+
+⏺ Bash(npm run build && npm run deploy)
+  ⎿  Interrupted · What should Claude do instead?
+
+> update changelog 
+
+⏺ I'll update the changelog with the debug mode feature and troubleshooting documentation.
+
+⏺ Read(CHANGELOG.md)
+  ⎿  Read 20 lines
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Added 5 lines                                                       
+       7                                                                 
+       8  ## [0.2.23] - 2026-01-04                                       
+       9                                                                 
+      10 +### Added                                                      
+      11 +- Comprehensive debug logging system for troubleshooting       
+         +styling issues (hidden UI toggle, available in code)           
+      12 +- Debug mode logs all styling operations: view state           
+         +detection, class application, CSS variable setting, and actual 
+         + computed styles                                               
+      13 +- Troubleshooting section in CLAUDE.md documenting             
+         +appearance.json font override issue and debug mode activation  
+      14 +                                                               
+      15  ### Fixed                                                      
+      16  - Removed redundant type unions from SourceModeStylingSettings 
+           interface where 'theme' string literal was incorrectly        
+          unioned with base string type                                  
+      17  - Simplified fontFamily, fontColor, headingColor,              
+          backgroundColor, and fontWeight types to match TypeScript's    
+          actual behaviour                                               
+
+⏺ Done. I've updated the changelog to document:
+
+  ★ Insight ─────────────────────────────────────
+  Changelog Strategy: Added the debug logging system under "Added" section since it's new functionality, even though the UI toggle is hidden. This documents the capability exists for future troubleshooting, and the troubleshooting documentation is also recorded.
+  ─────────────────────────────────────────────────
+
+  Changes Made
+
+  Added to version 0.2.23 under "Added":
+  - Comprehensive debug logging system (with note that UI toggle is hidden but available)
+  - Details about what the debug mode logs
+  - Documentation of the troubleshooting section in CLAUDE.md
+
+  The changelog now properly records both the TypeScript compliance fixes and the debugging infrastructure we added today.
+
+> ok. commit 
+
+⏺ I'll commit all the debug logging and troubleshooting documentation changes.
+
+⏺ Bash(git add -A && git status)
+  ⎿  On branch main                                        
+     Your branch is up to date with 'origin-projects/main'.
+     … +9 lines (ctrl+o to expand)
+
+⏺ Bash(git commit -m "Add debug logging and troubleshooting documentation…)
+  ⎿  [main 1f21321] Add debug logging and troubleshooting documentation
+      7 files changed, 183 insertions(+), 10 deletions(-)
+
+⏺ Bash(git log -1 --stat)
+  ⎿  commit 1f21321271b680cd4c0f511596da18f8413f4a1b    
+     Author: chrishoward-projects <chrish2077@gmail.com>
+     Date:   Mon Jan 5 23:43:17 2026 +1100
+     … +28 lines (ctrl+o to expand)
+
+⏺ Done. All changes have been committed.
+
+  ★ Insight ─────────────────────────────────────
+  What Was Committed: The complete debug logging infrastructure with hidden UI toggle, comprehensive troubleshooting documentation in CLAUDE.md, and CSS comments noting the appearance.json issue. The debug code is fully functional but invisible to users unless explicitly enabled by uncommenting the settings toggle.
+  ─────────────────────────────────────────────────
+
+  Commit Summary
+
+  Commit: 1f21321 - "Add debug logging and troubleshooting documentation"
+
+  Files Changed (7 files, 183 insertions, 10 deletions):
+  - CHANGELOG.md - Documented debug feature
+  - CLAUDE.md - Added troubleshooting section
+  - src/StyleInjector.ts - Debug logging added
+  - src/StylingManager.ts - Comprehensive debug logging
+  - src/main.ts - Debug mode setting
+  - src/settingsTab.ts - Hidden debug toggle
+  - styles.css - Comment about appearance.json
+
+  The debug infrastructure is now preserved in the codebase, ready to be activated whenever troubleshooting is needed by simply uncommenting lines 34-45 in settingsTab.ts.
+
+> /usage 
+  ⎿  Status dialog dismissed
+
+> /context 
+  ⎿  
+      Context Usage
+     ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛀ ⛁   claude-sonnet-4-5-20250929 · 128k/200k tokens (64%)
+     ⛁ ⛀ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ 
+     ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁   ⛁ System prompt: 3.0k tokens (1.5%)
+     ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁   ⛁ System tools: 15.3k tokens (7.7%)
+     ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁   ⛁ MCP tools: 5.3k tokens (2.7%)
+     ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁   ⛁ Memory files: 2.6k tokens (1.3%)
+     ⛁ ⛁ ⛁ ⛁ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶   ⛁ Messages: 101.6k tokens (50.8%)
+     ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶   ⛶ Free space: 72k (36.1%)
+     ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ 
+     ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ 
+     
+     MCP tools · /mcp
+     └ mcp__magic__21st_magic_component_builder: 927 tokens
+     └ mcp__magic__logo_search: 892 tokens
+     └ mcp__magic__21st_magic_component_inspiration: 739 tokens
+     └ mcp__magic__21st_magic_component_refiner: 848 tokens
+     └ mcp__context7__resolve-library-id: 999 tokens
+     └ mcp__context7__query-docs: 908 tokens
+     
+     Memory files · /memory
+     └ ~/.claude/CLAUDE.md: 1.6k tokens
+     └ CLAUDE.md: 1.1k tokens
+     
+     Skills and slash commands · /skills
+     
+     User
+     └ dailyreport: 854 tokens
+     
+     
+
+> /dailyreport 
+
+⏺ I'll generate a daily development report for today by analyzing the git commit history.
+
+⏺ Bash(TZ=Australia/Melbourne date +"%Y-%m-%d")
+  ⎿  2026-01-05
+
+⏺ Bash(git log --since="2026-01-05 00:00:00" --until="2026-01-05 23:59:59"
+      --pretty=format:"%h|%ai|%s" --no-merges)
+  ⎿ 1f21321|2026-01-05 23:43:17 +1100|Add debug logging and troubleshooting
+     documentation
+    82801ed|2026-01-05 21:17:48 +1100|font detection plan
+
+
+⏺ Bash(git log --since="2026-01-04 00:00:00" --until="2026-01-05 23:59:59"
+      --pretty=format:"%h|%ai|%s" --no-merges)
+  ⎿ 1f21321|2026-01-05 23:43:17 +1100|Add debug logging and troubleshooting
+     documentation
+    82801ed|2026-01-05 21:17:48 +1100|font detection plan
+    … +2 lines (ctrl+o to expand)
+
+
+⏺ Bash(git show 1f21321 --stat)
+  ⎿  commit 1f21321271b680cd4c0f511596da18f8413f4a1b    
+     Author: chrishoward-projects <chrish2077@gmail.com>
+     Date:   Mon Jan 5 23:43:17 2026 +1100
+     … +28 lines (ctrl+o to expand)
+
+⏺ Bash(git show 82801ed --stat)
+  ⎿  commit 82801edc84d29ff0cf552e9f53ac6e6f91b57286    
+     Author: chrishoward-projects <chrish2077@gmail.com>
+     Date:   Mon Jan 5 21:17:48 2026 +1100
+     … +6 lines (ctrl+o to expand)
+
+⏺ Bash(git show d81ba0a --stat)
+  ⎿  commit d81ba0ab0f59f3e98534a5deac36a0c1b2a6e3bb    
+     Author: chrishoward-projects <chrish2077@gmail.com>
+     Date:   Sun Jan 4 20:37:29 2026 +1100
+     … +24 lines (ctrl+o to expand)
+
+⏺ Bash(mkdir -p daily_reports)
+  ⎿  (No content)
+
+⏺ Write(daily_reports/2026-01-05.md)
+  ⎿  Wrote 64 lines to daily_reports/2026-01-05.md                         
+     # 2026-01-05 Development Summary
+     Focus: Code quality improvements, troubleshooting infrastructure, and
+     font detection performance planning
+     ## Key Achievements
+     ### Code Quality & TypeScript Compliance
+     - **Version 0.2.23 Released**: Fixed TypeScript compliance issues
+     identified by linter
+       - Removed redundant type unions where string literal 'theme' was
+     incorrectly combined with base string type
+       - Fixed Promise return warnings in event handlers by implementing
+     void async IIFE pattern in BaseSetting and LineHeightSetting
+     … +54 lines (ctrl+o to expand)
+
+⏺ Done. I've created today's development report and saved it to daily_reports/2026-01-05.md.
+
+  ★ Insight ─────────────────────────────────────
+  Report Structure: The summary captures the day's focus on code quality and troubleshooting infrastructure, highlighting the debug logging system's practical value in discovering the appearance.json issue. Also included the font detection plan as important architectural work, even though implementation is pending.
+  ─────────────────────────────────────────────────
+
+  Summary for 2026-01-05
+
+  Main Focus: Code quality improvements and troubleshooting infrastructure
+
+  Key Achievements:
+  - Released version 0.2.23 with TypeScript compliance fixes
+  - Built comprehensive debug logging system (hidden UI, ready when needed)
+  - Discovered and documented appearance.json font override issue
+  - Created detailed font detection optimisation plan (FONT_DETECTION_OPTIMIZATION.md)
+
+  Practical Impact:
+  - Debug logging successfully diagnosed a real styling issue
+  - TypeScript fixes eliminate all linter warnings
+  - Font detection plan addresses 2-3 second settings load delay
+
+  Commits Analysed: 2 (today), 4 (recent context included)
+
+  The report has been saved to the daily_reports folder in your project root.
+
+
+
