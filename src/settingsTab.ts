@@ -1,4 +1,4 @@
-import { PluginSettingTab, App } from "obsidian";
+import { PluginSettingTab, App, Setting } from "obsidian";
 import type SourceModeStyling from "./main";
 import { addFontFamilySetting } from "./settings/FontFamilySetting";
 import { addFontSizeSetting } from "./settings/FontSizeSetting";
@@ -28,5 +28,20 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		addLineHeightSetting(containerEl, this.plugin);
 		addHeadingColorSetting(containerEl, this.plugin);
 		addBackgroundColorSetting(containerEl, this.plugin);
+
+		// Debug mode toggle - Hidden but available for troubleshooting
+		// Uncomment to enable debug mode UI for diagnosing styling issues
+		/*
+		new Setting(containerEl)
+			.setName('Debug mode')
+			.setDesc('Enable debug logging to console (helpful for troubleshooting styling issues)')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.debugMode)
+				.onChange(async (value) => {
+					this.plugin.settings.debugMode = value;
+					await this.plugin.saveSettings();
+				})
+			);
+		*/
 	}
 }

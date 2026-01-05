@@ -12,6 +12,7 @@ export interface SourceModeStylingSettings {
 	headingColor: string;
 	backgroundColor: string;
 	fontWeight: string | number;
+	debugMode: boolean;
 }
 
 const DEFAULT_SETTINGS: SourceModeStylingSettings = {
@@ -22,7 +23,8 @@ const DEFAULT_SETTINGS: SourceModeStylingSettings = {
 	fontColor: "theme",
 	headingColor: "#2d5b8c",
 	backgroundColor: "theme",
-	fontWeight: "theme"
+	fontWeight: "theme",
+	debugMode: false
 }
 
 export default class SourceModeStyling extends Plugin {

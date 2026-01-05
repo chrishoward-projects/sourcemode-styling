@@ -7,7 +7,10 @@ If your plugin does not need CSS, delete this file.
 
 */
 
-/* Main source mode styling using CSS variables */
+/* Main source mode styling using CSS variables
+   NOTE: In rare cases, font settings in appearance.json may override these variables.
+   If fonts aren't applying despite CSS variables being set, check appearance.json
+   for textFontFamily/monospaceFontFamily settings. See CLAUDE.md troubleshooting section. */
 .source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
 	font-family: var(--sourcemode-font-family);
 	font-size: var(--sourcemode-font-size);

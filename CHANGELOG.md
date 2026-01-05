@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.23] - 2026-01-04
 
+### Added
+- Comprehensive debug logging system for troubleshooting styling issues (hidden UI toggle, available in code)
+- Debug mode logs all styling operations: view state detection, class application, CSS variable setting, and actual computed styles
+- Troubleshooting section in CLAUDE.md documenting appearance.json font override issue and debug mode activation
+
 ### Fixed
 - Removed redundant type unions from SourceModeStylingSettings interface where 'theme' string literal was incorrectly unioned with base string type
 - Simplified fontFamily, fontColor, headingColor, backgroundColor, and fontWeight types to match TypeScript's actual behaviour

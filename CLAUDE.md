@@ -49,6 +49,39 @@ This is an Obsidian plugin that customizes the appearance of source mode editing
 - Uses TypeScript with strict null checks and inline source maps for development
 - Refer always to Obsidian Developer Dcoumentation @https://github.com/obsidianmd/obsidian-developer-docs
 
+### Troubleshooting
+
+**Font Overrides Not Applying (appearance.json conflict)**
+
+In rare cases, font settings in `.obsidian/appearance.json` may prevent plugin CSS variables from being applied, even though the plugin correctly:
+- Detects source mode
+- Adds the `source-mode-raw` class
+- Sets CSS variables on `document.documentElement`
+
+**Symptoms:**
+- Debug mode shows all CSS variables being set correctly
+- Computed styles on editor show Obsidian's default font instead of plugin font
+- Issue occurs on specific vaults but not others
+
+**Root Cause:**
+Font settings in `appearance.json` (particularly `textFontFamily`, `monospaceFontFamily`) may have higher CSS specificity or be applied later in the cascade, overriding the plugin's CSS variables in certain Obsidian versions or configurations.
+
+**Resolution:**
+1. Manually edit `.obsidian/appearance.json` to remove font-related settings
+2. Restart Obsidian
+3. Reconfigure fonts through Settings > Appearance if needed
+4. Plugin should now properly override fonts in source mode
+
+**Prevention:**
+The debug mode feature helps identify this issue by showing actual computed styles versus expected styles. Enable "Debug mode" in plugin settings and check browser console for discrepancies between set variables and computed values.
+
+**Activating Debug Mode:**
+Debug logging code exists in StylingManager.ts and StyleInjector.ts but the UI toggle is hidden by default. To enable:
+1. Uncomment the debug mode toggle in `src/settingsTab.ts` (lines 34-45)
+2. Rebuild the plugin with `npm run build`
+3. Toggle will appear in plugin settings
+4. Enable to see detailed console logs of styling operations
+
 ### Obsidian Submission Compliance
 
 When making changes, ensure compliance with Obsidian submission guidelines:
