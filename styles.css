@@ -58,6 +58,12 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* Settings UI components */
-.source-mode-source-mode-settings-input-hidden {
+.source-mode-settings-input-hidden {
 	display: none;
+}
+
+.setting-item-control button.mod-cta {
+	padding: 4px 12px;
+	font-size: 13px;
+	line-height: 1.4;
 }

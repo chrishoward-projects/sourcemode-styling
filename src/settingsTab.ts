@@ -1,4 +1,4 @@
-import { PluginSettingTab, App, Setting } from "obsidian";
+import { PluginSettingTab, App } from "obsidian";
 import type SourceModeStyling from "./main";
 import { addFontFamilySetting } from "./settings/FontFamilySetting";
 import { addFontSizeSetting } from "./settings/FontSizeSetting";

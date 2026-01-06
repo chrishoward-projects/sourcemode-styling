@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.24] - 2026-01-07
+
+### Added
+- Font detection caching system to eliminate 2-3 second delay when opening settings
+- Lazy loading of fonts with non-blocking async detection (first load: 500-1000ms, cached: <10ms)
+- Font preview sample below font selector showing real-time visual feedback
+- Refresh Fonts button to manually re-detect available fonts
+- Hash-based cache validation to automatically invalidate when font list changes
+
+### Changed
+- Font detection now runs asynchronously in chunks to avoid blocking UI thread
+- Settings font selector shows loading state while detecting fonts
+- Font detection uses reliable DOM measurement method (Font Loading API proved unreliable for installed font detection)
+
+### Fixed
+- Fixed CSS class name typo: .source-mode-source-mode-settings-input-hidden to .source-mode-settings-input-hidden
+- Removed unused Font Loading API implementation in favour of accurate DOM measurement
+
 ## [0.2.23] - 2026-01-04
 
 ### Added

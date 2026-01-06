@@ -12,6 +12,11 @@ export interface SourceModeStylingSettings {
 	headingColor: string;
 	backgroundColor: string;
 	fontWeight: string | number;
+	cachedAvailableFonts?: {
+		fonts: string[];
+		fontListHash: string;  // Detects MONOSPACE_FONTS changes
+		timestamp: number;     // Future use for expiration
+	};
 	debugMode: boolean;
 }
 
