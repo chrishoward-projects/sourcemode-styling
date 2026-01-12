@@ -56,74 +56,43 @@ export class StylingManager {
 		};
 
 		const updateViewModeClass = () => {
-			this.log('Updating view mode class');
+			this.log('Updating view mode class for all editors');
 
-			// Try multiple selectors for the container that persists
-			const containers = [
-				document.querySelector('.workspace-split.mod-root'),
-				document.querySelector('.workspace-tabs'),
-				document.querySelector('.workspace-leaf'),
-				document.body
-			];
+			// Get all markdown leaves in the workspace
+			const leaves = this.app.workspace.getLeavesOfType('markdown');
+			this.log(`Found ${leaves.length} markdown leaves`);
 
-			const container = containers.find(c => c !== null);
+			// Apply class to each editor based on its individual mode
+			leaves.forEach((leaf, index) => {
+				const view = leaf.view;
+				if (!(view instanceof MarkdownView)) {
+					this.log(`Leaf ${index}: view is not MarkdownView`);
+					return;
+				}
 
-			if (!container) {
-				this.log('No container found');
-				return;
-			}
+				// Find the editor element for this specific leaf
+				const editorEl = leaf.view.containerEl.querySelector('.markdown-source-view.mod-cm6');
+				if (!editorEl) {
+					this.log(`Leaf ${index}: no editor element found`);
+					return;
+				}
 
-			const containerInfo = container === document.body ? 'document.body' : container.className;
-			this.log(`Using container: ${containerInfo}`);
+				// Check if this specific view is in source mode
+				const state = view.getState();
+				const isSourceMode = state.source === true && state.mode === "source";
 
-			const modeClasses = ["source-mode-raw"];
+				this.log(`Leaf ${index}: ${view.file?.path || 'no file'} - source mode: ${isSourceMode}`, {
+					source: state.source,
+					mode: state.mode
+				});
 
-			// Remove all mode classes first
-			container.classList.remove(...modeClasses);
-
-			const inSourceMode = this.isInSourceMode();
-			this.log(`Is in source mode: ${inSourceMode}`);
-
-			if (inSourceMode) {
-				container.classList.add("source-mode-raw");
-				this.log('Added source-mode-raw class to container');
-
-				// Diagnostic: Check if class is actually in DOM and CSS is applying
-				setTimeout(() => {
-					const hasClass = container.classList.contains('source-mode-raw');
-					this.log(`DOM check - source-mode-raw class present: ${hasClass}`);
-
-					// Check if CSS variables are accessible
-					const rootStyle = getComputedStyle(document.documentElement);
-					const fontFamily = rootStyle.getPropertyValue('--sourcemode-font-family');
-					this.log('CSS variable check', {
-						'--sourcemode-font-family': fontFamily || 'NOT SET',
-						'--sourcemode-font-size': rootStyle.getPropertyValue('--sourcemode-font-size') || 'NOT SET'
-					});
-
-					// Check actual computed style on the editor
-					const editor = document.querySelector('.source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller');
-					if (editor) {
-						const editorStyle = getComputedStyle(editor);
-						this.log('Editor computed styles', {
-							'font-family': editorStyle.fontFamily,
-							'font-size': editorStyle.fontSize,
-							'line-height': editorStyle.lineHeight
-						});
-					} else {
-						this.log('Editor element not found with selector: .source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller');
-
-						// Try to find what editor elements exist
-						const allEditors = document.querySelectorAll('.markdown-source-view');
-						this.log(`Found ${allEditors.length} .markdown-source-view elements`);
-						allEditors.forEach((el, idx) => {
-							this.log(`Editor ${idx} classes:`, el.className);
-						});
-					}
-				}, 100);
-			} else {
-				this.log('Removed source-mode-raw class from container');
-			}
+				// Apply or remove class based on this editor's mode
+				if (isSourceMode) {
+					editorEl.classList.add('source-mode-raw');
+				} else {
+					editorEl.classList.remove('source-mode-raw');
+				}
+			});
 
 			updateInjectedStyle();
 		};
@@ -132,8 +101,10 @@ export class StylingManager {
 
 		// Register workspace event listeners using plugin.registerEvent() for proper lifecycle management
 		this.plugin.registerEvent(
-			this.app.workspace.on("active-leaf-change", () => {
-				this.log('Event: active-leaf-change');
+			this.app.workspace.on("active-leaf-change", (leaf) => {
+				this.log('Event: active-leaf-change', {
+					leafType: leaf?.view?.getViewType() || 'unknown'
+				});
 				// Use setTimeout to ensure DOM is fully rendered
 				setTimeout(updateViewModeClass, 50);
 			})
@@ -167,11 +138,13 @@ export class StylingManager {
 
 		this.log('Disabling Source Mode Styling');
 
-		const viewContent = document.querySelector('.workspace-split.mod-root .view-content');
-		if (viewContent) {
-			viewContent.classList.remove("source-mode-raw");
-			this.log('Removed source-mode-raw class from view-content');
-		}
+		// Remove class from all editors
+		const editors = document.querySelectorAll('.markdown-source-view.mod-cm6.source-mode-raw');
+		editors.forEach(editor => {
+			editor.classList.remove('source-mode-raw');
+		});
+		this.log(`Removed source-mode-raw class from ${editors.length} editors`);
+
 		StyleInjector.removeAllVariables();
 		this.log('Removed all CSS variables');
 
@@ -183,25 +156,5 @@ export class StylingManager {
 
 	getIsEnabled(): boolean {
 		return this.isEnabled;
-	}
-
-	private isInSourceMode(): boolean {
-		// Check only the active markdown view - we only want styling for the currently active note
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-
-		if (!activeView) {
-			this.log('No active markdown view found');
-			return false;
-		}
-
-		const state = activeView.getState();
-		this.log('Active view state', {
-			source: state.source,
-			mode: state.mode,
-			file: activeView.file?.path || 'no file'
-		});
-
-		const isSourceMode = state.source === true && state.mode === "source";
-		return isSourceMode;
 	}
 } 

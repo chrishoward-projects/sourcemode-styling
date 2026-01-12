@@ -11,7 +11,7 @@ If your plugin does not need CSS, delete this file.
    NOTE: In rare cases, font settings in appearance.json may override these variables.
    If fonts aren't applying despite CSS variables being set, check appearance.json
    for textFontFamily/monospaceFontFamily settings. See CLAUDE.md troubleshooting section. */
-.source-mode-raw .markdown-source-view.mod-cm6 .cm-scroller {
+.markdown-source-view.mod-cm6.source-mode-raw .cm-scroller {
 	font-family: var(--sourcemode-font-family);
 	font-size: var(--sourcemode-font-size);
 	line-height: var(--sourcemode-line-height);
@@ -20,7 +20,7 @@ If your plugin does not need CSS, delete this file.
 	font-weight: var(--sourcemode-font-weight);
 }
 
-.source-mode-raw .markdown-source-view.mod-cm6 .cm-header {
+.markdown-source-view.mod-cm6.source-mode-raw .cm-header {
 	font-size: initial !important;
 	font-weight: bold;
 	text-decoration: none;
@@ -29,7 +29,7 @@ If your plugin does not need CSS, delete this file.
 	color: var(--sourcemode-heading-color, inherit);
 }
 
-.source-mode-raw .markdown-source-view.mod-cm6 .cm-header.cm-formatting-header {
+.markdown-source-view.mod-cm6.source-mode-raw .cm-header.cm-formatting-header {
 	color: var(--text-formatting);
 }
 

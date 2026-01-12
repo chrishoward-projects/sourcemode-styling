@@ -6,7 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.2.24] - 2026-01-12
+## [0.2.26] - 2026-01-12
+
+### Fixed
+- Fixed styling persistence bug where plugin styling would revert to Obsidian's default when clicking side panels (file explorer, search, etc.)
+- Fixed issue where styling was incorrectly applied to all visible notes regardless of their mode
+- Changed architecture from global container-based styling to per-editor styling
+- Each editor now has styling applied individually based on its own source mode state
+- Properly supports split panes and multiple notes with different modes simultaneously
+- CSS selector changed from `.source-mode-raw .markdown-source-view.mod-cm6` to `.markdown-source-view.mod-cm6.source-mode-raw` for per-editor targeting
 
 ## [0.2.25] - 2026-01-12
 
