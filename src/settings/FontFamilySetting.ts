@@ -7,7 +7,6 @@ class FontFamilySetting extends BaseSetting {
 	private availableFonts: string[] = [];
 	private dropdown: HTMLSelectElement | null = null;
 	private refreshButton: HTMLButtonElement | null = null;
-	private fontSample: HTMLElement | null = null;
 
 	constructor(containerEl: HTMLElement, plugin: SourceModeStyling) {
 		const config: SettingConfig = {
@@ -54,28 +53,6 @@ class FontFamilySetting extends BaseSetting {
 		});
 
 		setting.controlEl.appendChild(this.refreshButton);
-
-		// Create font sample preview below the setting (as separate element after the setting)
-		const sampleWrapper = document.createElement('div');
-		sampleWrapper.style.width = '100%';
-		sampleWrapper.style.marginTop = '8px';
-		sampleWrapper.style.marginBottom = '16px';
-
-		this.fontSample = document.createElement('div');
-		this.fontSample.className = 'font-sample-preview';
-		this.fontSample.textContent = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz 0123456789 !@#$%^&*_+-=(){}[]';
-		this.fontSample.style.padding = '8px';
-		this.fontSample.style.backgroundColor = 'var(--background-secondary)';
-		this.fontSample.style.borderRadius = '4px';
-		this.fontSample.style.fontSize = '14px';
-		this.fontSample.style.lineHeight = '1.5';
-		this.fontSample.style.overflowX = 'auto';
-		this.fontSample.style.whiteSpace = 'nowrap';
-
-		sampleWrapper.appendChild(this.fontSample);
-
-		// Insert after the setting element
-		this.containerEl.insertBefore(sampleWrapper, setting.settingEl.nextSibling);
 
 		// Load fonts asynchronously
 		void this.loadFontsAsync();
@@ -140,31 +117,15 @@ class FontFamilySetting extends BaseSetting {
 		// Set current value
 		this.dropdown.value = currentFont;
 
-		// Update font sample with current font
-		this.updateFontSample(currentFont);
-
 		// Attach change listener
 		this.dropdown.addEventListener('change', () => {
 			void (async () => {
 				const selectedFont = this.dropdown!.value;
 				this.setSettingValue(selectedFont);
-				this.updateFontSample(selectedFont);
 				await this.plugin.saveSettings();
 				this.plugin.app.workspace.trigger('layout-change');
 			})();
 		});
-	}
-
-	private updateFontSample(fontValue: string): void {
-		if (!this.fontSample) return;
-
-		if (fontValue === 'theme') {
-			// Use current theme's monospace font
-			this.fontSample.style.fontFamily = 'var(--font-monospace)';
-		} else {
-			// Use the selected font
-			this.fontSample.style.fontFamily = `"${fontValue}", monospace`;
-		}
 	}
 
 	private async handleRefresh(): Promise<void> {

@@ -43,10 +43,11 @@ Source Mode Styling enhances Obsidian's source mode editor by applying monospace
 | Setting                | Description                       | Options                                    |
 | ---------------------- | --------------------------------- | ------------------------------------------ |
 | **Monospace font**     | Choose your preferred coding font | Auto-detected system fonts + theme default |
-| **Font size**          | Adjust text size for readability  | 9-20px or theme default                    |
 | **Font weight**        | Control text thickness            | Normal, Light, Semi-bold, Custom (100-900) |
-| **Line height**        | Adjust vertical spacing           | 1.0-2.5 or theme default                   |
-| **Heading colour**     | Customize heading appearance      | Custom colour picker or theme default      |
+| **Font size**          | Adjust text size for readability  | Custom or theme default                    |
+| **Font colour**        | Set font custom colour            | Custom colour picker or theme default.     |
+| **Line height**        | Adjust vertical spacing           | Custom or theme default                    |
+| **Heading colour**     | Set custom headings colour.       | Custom colour picker or theme default      |
 | **Background colour**  | Set editor background             | Custom colour picker or theme default      |
 
 ### Font Detection
@@ -114,7 +115,7 @@ For advanced users, the plugin adds a class `.source-mode-raw` and generates CSS
 
 ## Compatibility
 
-* **Obsidian Version:** 0.15.0+
+* **Obsidian Version:** 1.9.14+
 * **Platforms:** Windows, macOS, Linux, iOS, Android
 * **Themes:** Compatible with all Obsidian themes
 * **Other Plugins:** No known conflicts

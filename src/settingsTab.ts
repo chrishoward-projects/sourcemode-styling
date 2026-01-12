@@ -7,9 +7,11 @@ import { addFontColorSetting } from "./settings/FontColorSetting";
 import { addHeadingColorSetting } from "./settings/HeadingColorSetting";
 import { addBackgroundColorSetting } from "./settings/BackgroundColorSetting";
 import { addFontWeightSetting } from "./settings/FontWeightSetting";
+import { addStylePreview, StylePreview } from "./settings/StylePreview";
 
 export class SourceModeStylingSettingTab extends PluginSettingTab {
 	plugin: SourceModeStyling;
+	private stylePreview: StylePreview | null = null;
 
 	constructor(app: App, plugin: SourceModeStyling) {
 		super(app, plugin);
@@ -18,6 +20,11 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 
 	display(): void {
 		const { containerEl } = this;
+
+		if (this.stylePreview) {
+			this.stylePreview.destroy();
+			this.stylePreview = null;
+		}
 
 		containerEl.empty();
 
@@ -28,6 +35,8 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		addLineHeightSetting(containerEl, this.plugin);
 		addHeadingColorSetting(containerEl, this.plugin);
 		addBackgroundColorSetting(containerEl, this.plugin);
+
+		this.stylePreview = addStylePreview(containerEl, this.plugin);
 
 		// Debug mode toggle - Hidden but available for troubleshooting
 		// Uncomment to enable debug mode UI for diagnosing styling issues
