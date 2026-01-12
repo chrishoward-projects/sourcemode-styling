@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.2.24] - 2026-01-12
+
+## [0.2.25] - 2026-01-12
+
+### Added
+- Dedicated StylePreview component at bottom of settings showing comprehensive style preview
+- Preview displays heading (always bold) and paragraph with sample text including alphabet, numbers, and symbols
+- Real-time preview updates when any setting changes via workspace event listening
+
+### Changed
+- Relocated font preview from FontFamilySetting to dedicated StylePreview component at bottom of all settings
+- Preview now applies all 7 styling settings dynamically: font family, size, weight, color, heading color, background color, and line height
+- Heading element always displays in bold regardless of font weight setting for better visual hierarchy
+- Paragraph element applies user-selected font weight setting
+
+### Removed
+- Inline font sample from FontFamilySetting component
+
 ## [0.2.24] - 2026-01-07
 
 ### Added
