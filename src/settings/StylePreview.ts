@@ -23,7 +23,7 @@ export class StylePreview {
 
 		const nameEl = document.createElement('div');
 		nameEl.className = 'setting-item-name';
-		nameEl.textContent = 'Style Preview';
+		nameEl.textContent = 'Style preview';
 
 		const descEl = document.createElement('div');
 		descEl.className = 'setting-item-description';
@@ -37,7 +37,7 @@ export class StylePreview {
 
 		this.headingEl = document.createElement('div');
 		this.headingEl.className = 'style-preview-heading';
-		this.headingEl.textContent = 'The Quick Brown Fox Jumps Over the Lazy Dog';
+		this.headingEl.textContent = 'The quick brown fox jumps over the lazy dog';
 
 		this.paragraphEl = document.createElement('div');
 		this.paragraphEl.className = 'style-preview-paragraph';
