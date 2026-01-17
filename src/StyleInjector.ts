@@ -10,7 +10,7 @@ export class StyleInjector {
 
 	private static log(message: string, data?: unknown): void {
 		if (this.debugMode) {
-			console.log(`[SourceMode StyleInjector] ${message}`, data !== undefined ? data : '');
+			console.debug(`[SourceMode StyleInjector] ${message}`, data !== undefined ? data : '');
 		}
 	}
 

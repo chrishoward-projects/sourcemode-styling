@@ -41,6 +41,7 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 
 		// Debug mode toggle - Hidden but available for troubleshooting
 		// Uncomment to enable debug mode UI for diagnosing styling issues
+		// Make user VERBOSE is enabled in console for full debug output
 		
 		// new Setting(containerEl)
 		// 	.setName('Debug mode')

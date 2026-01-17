@@ -21,7 +21,7 @@ export class StylingManager {
 
 	private log(message: string, data?: unknown): void {
 		if (this.settings.debugMode) {
-			console.log(`[SourceMode Debug] ${message}`, data !== undefined ? data : '');
+			console.debug(`[SourceMode Debug] ${message}`, data !== undefined ? data : '');
 		}
 	}
 
