@@ -77,18 +77,35 @@ If your plugin does not need CSS, delete this file.
 
 .style-preview-container {
 	padding: 16px;
-	background-color: var(--background-secondary);
+	background-color: var(--preview-background-color, var(--background-secondary));
 	border-radius: 4px;
 	margin-top: 8px;
 }
 
 .style-preview-heading {
+	font-family: var(--preview-font-family, inherit);
+	font-size: var(--preview-font-size, inherit);
 	font-weight: bold;
+	line-height: var(--preview-line-height, inherit);
+	color: var(--preview-heading-color, var(--text-normal));
 	margin-bottom: 12px;
 }
 
 .style-preview-paragraph {
-	line-height: 1.6;
+	font-family: var(--preview-font-family, inherit);
+	font-size: var(--preview-font-size, inherit);
+	font-weight: var(--preview-font-weight, inherit);
+	line-height: var(--preview-line-height, 1.6);
+	color: var(--preview-font-color, var(--text-normal));
 	white-space: pre-wrap;
 	word-wrap: break-word;
+}
+
+/* Refresh button styling */
+.sourcemode-refresh-button {
+	margin-left: 8px;
+}
+
+.sourcemode-refresh-button.is-hidden {
+	display: none;
 }

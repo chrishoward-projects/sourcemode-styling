@@ -59,46 +59,44 @@ export class StylePreview {
 	}
 
 	private updatePreviewStyles(): void {
-		if (!this.headingEl || !this.paragraphEl || !this.previewWrapper) return;
+		if (!this.previewWrapper) return;
 
 		const s = this.plugin.settings;
+		const style = this.previewWrapper.style;
 
+		// Set CSS custom properties on the container
 		const fontFamily = s.fontFamily === 'theme'
 			? 'var(--font-monospace)'
 			: `"${s.fontFamily}", monospace`;
-		this.headingEl.style.fontFamily = fontFamily;
-		this.paragraphEl.style.fontFamily = fontFamily;
+		style.setProperty('--preview-font-family', fontFamily);
 
 		const fontSize = s.fontSize === 'theme'
-			? ''
+			? 'inherit'
 			: `${s.fontSize}px`;
-		this.headingEl.style.fontSize = fontSize;
-		this.paragraphEl.style.fontSize = fontSize;
+		style.setProperty('--preview-font-size', fontSize);
 
 		const fontWeight = this.getFontWeightValue(s.fontWeight);
-		this.headingEl.style.fontWeight = 'bold';
-		this.paragraphEl.style.fontWeight = fontWeight;
+		style.setProperty('--preview-font-weight', fontWeight || 'inherit');
 
 		const lineHeight = s.lineHeight === 'theme'
-			? ''
+			? 'inherit'
 			: `${s.lineHeight}`;
-		this.headingEl.style.lineHeight = lineHeight;
-		this.paragraphEl.style.lineHeight = lineHeight;
+		style.setProperty('--preview-line-height', lineHeight);
 
 		const fontColor = s.fontColor === 'theme'
 			? 'var(--text-normal)'
 			: s.fontColor;
-		this.paragraphEl.style.color = fontColor;
+		style.setProperty('--preview-font-color', fontColor);
 
 		const headingColor = s.headingColor === 'theme'
 			? 'var(--text-normal)'
 			: s.headingColor;
-		this.headingEl.style.color = headingColor;
+		style.setProperty('--preview-heading-color', headingColor);
 
 		const backgroundColor = s.backgroundColor === 'theme'
 			? 'var(--background-secondary)'
 			: s.backgroundColor;
-		this.previewWrapper.style.backgroundColor = backgroundColor;
+		style.setProperty('--preview-background-color', backgroundColor);
 	}
 
 	private getFontWeightValue(fontWeight: string | number): string {

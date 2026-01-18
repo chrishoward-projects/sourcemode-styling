@@ -45,9 +45,7 @@ class FontFamilySetting extends BaseSetting {
 		// Create refresh button (hidden until fonts load)
 		this.refreshButton = document.createElement('button');
 		this.refreshButton.textContent = 'Refresh fonts';
-		this.refreshButton.className = 'mod-cta';
-		this.refreshButton.style.display = 'none';
-		this.refreshButton.style.marginLeft = '8px';
+		this.refreshButton.className = 'mod-cta sourcemode-refresh-button is-hidden';
 		this.refreshButton.addEventListener('click', () => {
 			void this.handleRefresh();
 		});
@@ -71,7 +69,7 @@ class FontFamilySetting extends BaseSetting {
 
 			// Show refresh button after successful load
 			if (this.refreshButton) {
-				this.refreshButton.style.display = '';
+				this.refreshButton.classList.remove('is-hidden');
 			}
 		} catch (error) {
 			console.error('Failed to load fonts:', error);
