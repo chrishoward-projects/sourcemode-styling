@@ -83,8 +83,8 @@ class FontFamilySetting extends BaseSetting {
 	private populateDropdown(): void {
 		if (!this.dropdown) return;
 
-		// Clear loading state
-		this.dropdown.innerHTML = '';
+		// Clear loading state using Obsidian's safe empty() method
+		this.dropdown.empty();
 		this.dropdown.disabled = false;
 
 		// Add 'theme' option
