@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.2.29] - 2026-01-24
+
+### Changed
+- Upgraded ESLint to v9 with flat config format (eslint.config.mjs)
+- Upgraded TypeScript to v5.x
+- Added eslint-plugin-obsidianmd for Obsidian-specific linting rules
+- Replaced @typescript-eslint/parser and @typescript-eslint/eslint-plugin with unified typescript-eslint package
+- Removed deprecated .eslintrc, .eslintrc.json, and .eslintignore files
+
 ## [0.2.28] - 2026-01-19
 
 - bump version to fix release mismatch

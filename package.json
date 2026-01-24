@@ -1,6 +1,6 @@
 {
 	"name": "sourcemode-styling",
-	"version": "0.2.28",
+	"version": "0.2.29",
 	"description": "Obsidian plugin to style source mode with monospace font",
 	"main": "main.js",
 	"scripts": {
@@ -19,13 +19,13 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
 		"esbuild": "0.17.3",
-		"eslint": "^8.18.0",
+		"eslint": "^9.0.0",
+		"eslint-plugin-obsidianmd": "^0.1.9",
 		"obsidian": "latest",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "^5.0.0",
+		"typescript-eslint": "^8.0.0"
 	}
 }
