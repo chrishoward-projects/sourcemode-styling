@@ -4,27 +4,21 @@ import type SourceModeStyling from '../main';
 export function addLineHeightSetting(containerEl: HTMLElement, plugin: SourceModeStyling) {
 	const lineHeightSetting = new Setting(containerEl)
 		.setName('Line height')
-		.setDesc('Set the line height for source mode (e.g. 1.0–2.5)');
-	const lineHeightModeSelect = document.createElement('select');
-	const themeOption = document.createElement('option');
-	themeOption.value = 'theme';
-	themeOption.textContent = 'Theme default';
-	const customOption = document.createElement('option');
-	customOption.value = 'custom';
-	customOption.textContent = 'Custom';
-	lineHeightModeSelect.appendChild(themeOption);
-	lineHeightModeSelect.appendChild(customOption);
+		.setDesc('Set the line height for source mode (e.g. 1.0-2.5)');
+
+	const lineHeightModeSelect = lineHeightSetting.controlEl.createEl('select');
+	lineHeightModeSelect.createEl('option', { value: 'theme', text: 'Theme default' });
+	lineHeightModeSelect.createEl('option', { value: 'custom', text: 'Custom' });
+
 	const isLineHeightCustom = typeof plugin.settings.lineHeight === 'number';
 	lineHeightModeSelect.value = isLineHeightCustom ? 'custom' : 'theme';
-	lineHeightSetting.controlEl.appendChild(lineHeightModeSelect);
-	const lineHeightInput = document.createElement('input');
-	lineHeightInput.type = 'number';
-	lineHeightInput.min = '1.0';
-	lineHeightInput.max = '2.5';
-	lineHeightInput.step = '0.05';
-	lineHeightInput.value = isLineHeightCustom ? plugin.settings.lineHeight.toString() : '1.75';
-	if (!isLineHeightCustom) lineHeightInput.className = 'source-mode-settings-input-hidden';
-	lineHeightSetting.controlEl.appendChild(lineHeightInput);
+
+	const lineHeightInput = lineHeightSetting.controlEl.createEl('input', {
+		type: 'number',
+		value: isLineHeightCustom ? plugin.settings.lineHeight.toString() : '1.75',
+		cls: isLineHeightCustom ? '' : 'source-mode-settings-input-hidden',
+		attr: { min: '1.0', max: '2.5', step: '0.05' }
+	});
 	lineHeightModeSelect.addEventListener('change', () => {
 		void (async () => {
 			if (lineHeightModeSelect.value === 'custom') {

@@ -15,41 +15,24 @@ export class StylePreview {
 	}
 
 	public render(): void {
-		const previewSection = document.createElement('div');
-		previewSection.className = 'style-preview-section';
+		const previewSection = this.containerEl.createDiv({ cls: 'style-preview-section' });
 
-		const headingWrapper = document.createElement('div');
-		headingWrapper.className = 'setting-item-heading';
+		const headingWrapper = previewSection.createDiv({ cls: 'setting-item-heading' });
+		headingWrapper.createDiv({ cls: 'setting-item-name', text: 'Style preview' });
+		headingWrapper.createDiv({
+			cls: 'setting-item-description',
+			text: 'Preview how your settings will appear in source mode. This approximate only. Headings, lists, and other elements may vary.'
+		});
 
-		const nameEl = document.createElement('div');
-		nameEl.className = 'setting-item-name';
-		nameEl.textContent = 'Style preview';
-
-		const descEl = document.createElement('div');
-		descEl.className = 'setting-item-description';
-		descEl.textContent = 'Preview how your settings will appear in source mode. This approximate only. Headings, lists, and other elements may vary.';
-
-		headingWrapper.appendChild(nameEl);
-		headingWrapper.appendChild(descEl);
-
-		this.previewWrapper = document.createElement('div');
-		this.previewWrapper.className = 'style-preview-container';
-
-		this.headingEl = document.createElement('div');
-		this.headingEl.className = 'style-preview-heading';
-		this.headingEl.textContent = 'The quick brown fox jumps over the lazy dog';
-
-		this.paragraphEl = document.createElement('div');
-		this.paragraphEl.className = 'style-preview-paragraph';
-		this.paragraphEl.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz 01234567890 !@#$%^&*()_+-={}[]|;\':",.<>?/~`';
-
-		this.previewWrapper.appendChild(this.headingEl);
-		this.previewWrapper.appendChild(this.paragraphEl);
-
-		previewSection.appendChild(headingWrapper);
-		previewSection.appendChild(this.previewWrapper);
-
-		this.containerEl.appendChild(previewSection);
+		this.previewWrapper = previewSection.createDiv({ cls: 'style-preview-container' });
+		this.headingEl = this.previewWrapper.createDiv({
+			cls: 'style-preview-heading',
+			text: 'The quick brown fox jumps over the lazy dog'
+		});
+		this.paragraphEl = this.previewWrapper.createDiv({
+			cls: 'style-preview-paragraph',
+			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz 01234567890 !@#$%^&*()_+-={}[]|;\':",.<>?/~`'
+		});
 
 		this.eventRef = this.plugin.app.workspace.on('layout-change', () => {
 			this.updatePreviewStyles();

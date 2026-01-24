@@ -32,25 +32,18 @@ class FontFamilySetting extends BaseSetting {
 			.setDesc(this.config.description);
 
 		// Create dropdown with loading state
-		this.dropdown = document.createElement('select');
+		this.dropdown = setting.controlEl.createEl('select');
 		this.dropdown.disabled = true;
-
-		const loadingOption = document.createElement('option');
-		loadingOption.value = '';
-		loadingOption.textContent = 'Loading fonts...';
-		this.dropdown.appendChild(loadingOption);
-
-		setting.controlEl.appendChild(this.dropdown);
+		this.dropdown.createEl('option', { value: '', text: 'Loading fonts...' });
 
 		// Create refresh button (hidden until fonts load)
-		this.refreshButton = document.createElement('button');
-		this.refreshButton.textContent = 'Refresh fonts';
-		this.refreshButton.className = 'mod-cta sourcemode-refresh-button is-hidden';
+		this.refreshButton = setting.controlEl.createEl('button', {
+			text: 'Refresh fonts',
+			cls: 'mod-cta sourcemode-refresh-button is-hidden'
+		});
 		this.refreshButton.addEventListener('click', () => {
 			void this.handleRefresh();
 		});
-
-		setting.controlEl.appendChild(this.refreshButton);
 
 		// Load fonts asynchronously
 		void this.loadFontsAsync();
@@ -88,10 +81,7 @@ class FontFamilySetting extends BaseSetting {
 		this.dropdown.disabled = false;
 
 		// Add 'theme' option
-		const themeOption = document.createElement('option');
-		themeOption.value = 'theme';
-		themeOption.textContent = 'Use theme font';
-		this.dropdown.appendChild(themeOption);
+		this.dropdown.createEl('option', { value: 'theme', text: 'Use theme font' });
 
 		// Always include the current font if it's not already there
 		const currentFont = this.plugin.settings.fontFamily;
@@ -106,10 +96,7 @@ class FontFamilySetting extends BaseSetting {
 
 		// Add detected fonts
 		this.availableFonts.forEach(font => {
-			const option = document.createElement('option');
-			option.value = font;
-			option.textContent = font;
-			this.dropdown!.appendChild(option);
+			this.dropdown!.createEl('option', { value: font, text: font });
 		});
 
 		// Set current value

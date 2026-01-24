@@ -37,18 +37,14 @@ export abstract class BaseSetting {
 	}
 
 	private createDropdownWithInput(setting: Setting): void {
-		const dropdown = document.createElement('select');
+		const dropdown = setting.controlEl.createEl('select');
 		this.config.options!.forEach(option => {
-			const optionElement = document.createElement('option');
-			optionElement.value = option.value;
-			optionElement.textContent = option.text;
-			dropdown.appendChild(optionElement);
+			dropdown.createEl('option', { value: option.value, text: option.text });
 		});
 
 		const currentValue = this.getSettingValue();
 		const isCustom = this.isCustomValue(currentValue);
 		dropdown.value = isCustom ? 'custom' : currentValue.toString();
-		setting.controlEl.appendChild(dropdown);
 
 		if (this.config.inputType) {
 			const input = this.createInput(isCustom, currentValue);
