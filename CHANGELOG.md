@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.30] - 2026-01-24
+
+### Fixed
+- Replace innerHTML with safe empty() method to prevent potential XSS vulnerabilities
+- Add hide() method to settings tab for proper event cleanup when tab is closed or plugin disabled
+- Remove broad CSS selector that was overriding Obsidian core button styles
+
+### Changed
+- Use Obsidian DOM helpers (createEl, createDiv) instead of document.createElement for consistency
+- Use Obsidian CSS variables for spacing and border-radius in settings UI
+
+### Added
+- Add aria-label and data-tooltip-position to refresh button for accessibility
+
 ## [0.2.29] - 2026-01-24
 
 ### Changed
