@@ -22,10 +22,8 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 
-		if (this.stylePreview) {
-			this.stylePreview.destroy();
-			this.stylePreview = null;
-		}
+		// Clean up existing preview before recreating
+		this.cleanupPreview();
 
 		containerEl.empty();
 
@@ -42,7 +40,7 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		// Debug mode toggle - Hidden but available for troubleshooting
 		// Uncomment to enable debug mode UI for diagnosing styling issues
 		// Make user VERBOSE is enabled in console for full debug output
-		
+
 		// new Setting(containerEl)
 		// 	.setName('Debug mode')
 		// 	.setDesc('Enable debug logging to console (helpful for troubleshooting styling issues)')
@@ -53,6 +51,21 @@ export class SourceModeStylingSettingTab extends PluginSettingTab {
 		// 			await this.plugin.saveSettings();
 		// 		})
 		// 	);
-		
+
+	}
+
+	/**
+	 * Called by Obsidian when the settings tab is hidden or plugin is disabled.
+	 * Ensures proper cleanup of event listeners to prevent memory leaks.
+	 */
+	hide(): void {
+		this.cleanupPreview();
+	}
+
+	private cleanupPreview(): void {
+		if (this.stylePreview) {
+			this.stylePreview.destroy();
+			this.stylePreview = null;
+		}
 	}
 }
