@@ -70,16 +70,16 @@ If your plugin does not need CSS, delete this file.
 
 /* Style Preview Component */
 .style-preview-section {
-	margin-top: 24px;
-	padding-top: 16px;
+	margin-top: var(--size-4-6);
+	padding-top: var(--size-4-4);
 	border-top: 1px solid var(--background-modifier-border);
 }
 
 .style-preview-container {
-	padding: 16px;
+	padding: var(--size-4-4);
 	background-color: var(--preview-background-color, var(--background-secondary));
-	border-radius: 4px;
-	margin-top: 8px;
+	border-radius: var(--radius-s);
+	margin-top: var(--size-4-2);
 }
 
 .style-preview-heading {
@@ -88,7 +88,7 @@ If your plugin does not need CSS, delete this file.
 	font-weight: bold;
 	line-height: var(--preview-line-height, inherit);
 	color: var(--preview-heading-color, var(--text-normal));
-	margin-bottom: 12px;
+	margin-bottom: var(--size-4-3);
 }
 
 .style-preview-paragraph {
@@ -103,7 +103,7 @@ If your plugin does not need CSS, delete this file.
 
 /* Refresh button styling */
 .sourcemode-refresh-button {
-	margin-left: 8px;
+	margin-left: var(--size-4-2);
 }
 
 .sourcemode-refresh-button.is-hidden {
