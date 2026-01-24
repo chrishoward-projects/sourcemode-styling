@@ -39,7 +39,8 @@ class FontFamilySetting extends BaseSetting {
 		// Create refresh button (hidden until fonts load)
 		this.refreshButton = setting.controlEl.createEl('button', {
 			text: 'Refresh fonts',
-			cls: 'mod-cta sourcemode-refresh-button is-hidden'
+			cls: 'mod-cta sourcemode-refresh-button is-hidden',
+			attr: { 'aria-label': 'Refresh fonts', 'data-tooltip-position': 'top' }
 		});
 		this.refreshButton.addEventListener('click', () => {
 			void this.handleRefresh();
