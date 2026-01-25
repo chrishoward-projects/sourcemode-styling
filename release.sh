@@ -14,6 +14,10 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
+# Push commits to remote
+echo "Pushing commits to origin-projects..."
+git push origin-projects
+
 # Get current version from package.json
 CURRENT_VERSION=$(node -p "require('./package.json').version")
 echo "Creating release for version $CURRENT_VERSION"
