@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Skills
+
+- Do not use any of the `superpowers` skills (e.g. `superpowers:brainstorming`, `superpowers:systematic-debugging`, `superpowers:test-driven-development`, etc.) in this repository.
+
 ## Development Commands
 
 - **Build for development**: `npm run dev` (runs esbuild in watch mode)
