@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.33] - 2026-09-01
+
+### Fixed
+- Disabling the plugin now clears source mode styling from editors in popout windows, which the previous document-scoped lookup could not reach
+- A pending view mode update can no longer re-apply styling after the plugin is disabled
+
+### Changed
+- Collapsed three separate timers into one debounced view mode update, so opening a file no longer triggers the same work three times
+
 ## [0.2.32] - 2026-08-31
 
 ### Fixed

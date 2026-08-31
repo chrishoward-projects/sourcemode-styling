@@ -1,4 +1,5 @@
-import { MarkdownView, App, Plugin } from 'obsidian';
+import { MarkdownView, App, Plugin, debounce } from 'obsidian';
+import type { Debouncer } from 'obsidian';
 import { CSSGenerator } from './CSSGenerator';
 import { StyleInjector } from './StyleInjector';
 import type { SourceModeStylingSettings } from './main';
@@ -11,6 +12,7 @@ export class StylingManager {
 
 	// Callback functions
 	private updateInjectedStyle?: () => void;
+	private scheduleViewModeUpdate?: Debouncer<[], void>;
 
 	constructor(app: App, plugin: Plugin, settings: SourceModeStylingSettings) {
 		this.app = app;
@@ -23,6 +25,32 @@ export class StylingManager {
 		if (this.settings.debugMode) {
 			console.debug(`[SourceMode Debug] ${message}`, data !== undefined ? data : '');
 		}
+	}
+
+	/**
+	 * Runs a callback against the source view element of every markdown leaf.
+	 * Walking the workspace rather than querying a document covers popout windows,
+	 * which a document-scoped query would miss.
+	 */
+	private forEachEditorEl(callback: (editorEl: Element, view: MarkdownView, index: number) => void): void {
+		const leaves = this.app.workspace.getLeavesOfType('markdown');
+		this.log(`Found ${leaves.length} markdown leaves`);
+
+		leaves.forEach((leaf, index) => {
+			const view = leaf.view;
+			if (!(view instanceof MarkdownView)) {
+				this.log(`Leaf ${index}: view is not MarkdownView`);
+				return;
+			}
+
+			const editorEl = view.containerEl.querySelector('.markdown-source-view.mod-cm6');
+			if (!editorEl) {
+				this.log(`Leaf ${index}: no editor element found`);
+				return;
+			}
+
+			callback(editorEl, view, index);
+		});
 	}
 
 	updateSettings(settings: SourceModeStylingSettings) {
@@ -58,26 +86,8 @@ export class StylingManager {
 		const updateViewModeClass = () => {
 			this.log('Updating view mode class for all editors');
 
-			// Get all markdown leaves in the workspace
-			const leaves = this.app.workspace.getLeavesOfType('markdown');
-			this.log(`Found ${leaves.length} markdown leaves`);
-
 			// Apply class to each editor based on its individual mode
-			leaves.forEach((leaf, index) => {
-				const view = leaf.view;
-				if (!(view instanceof MarkdownView)) {
-					this.log(`Leaf ${index}: view is not MarkdownView`);
-					return;
-				}
-
-				// Find the editor element for this specific leaf
-				const editorEl = leaf.view.containerEl.querySelector('.markdown-source-view.mod-cm6');
-				if (!editorEl) {
-					this.log(`Leaf ${index}: no editor element found`);
-					return;
-				}
-
-				// Check if this specific view is in source mode
+			this.forEachEditorEl((editorEl, view, index) => {
 				const state = view.getState();
 				const isSourceMode = state.source === true && state.mode === "source";
 
@@ -86,16 +96,18 @@ export class StylingManager {
 					mode: state.mode
 				});
 
-				// Apply or remove class based on this editor's mode
-				if (isSourceMode) {
-					editorEl.classList.add('source-mode-raw');
-				} else {
-					editorEl.classList.remove('source-mode-raw');
-				}
+				editorEl.classList.toggle('source-mode-raw', isSourceMode);
 			});
 
 			updateInjectedStyle();
 		};
+
+		// One debounced update shared by all three events, which commonly fire together
+		// on a single file open. resetTimer is false so a sustained stream of
+		// layout-change events (a pane drag, a window resize) still updates every
+		// interval instead of being deferred until the stream stops.
+		const scheduleViewModeUpdate = debounce(updateViewModeClass, 100, false);
+		this.scheduleViewModeUpdate = scheduleViewModeUpdate;
 
 		this.updateInjectedStyle = updateInjectedStyle;
 
@@ -105,15 +117,15 @@ export class StylingManager {
 				this.log('Event: active-leaf-change', {
 					leafType: leaf?.view?.getViewType() || 'unknown'
 				});
-				// Use setTimeout to ensure DOM is fully rendered
-				setTimeout(updateViewModeClass, 50);
+				// Debounced so the DOM has settled before the class is applied
+				scheduleViewModeUpdate();
 			})
 		);
 
 		this.plugin.registerEvent(
 			this.app.workspace.on("layout-change", () => {
 				this.log('Event: layout-change');
-				setTimeout(updateViewModeClass, 50);
+				scheduleViewModeUpdate();
 			})
 		);
 
@@ -121,7 +133,7 @@ export class StylingManager {
 		this.plugin.registerEvent(
 			this.app.workspace.on("file-open", () => {
 				this.log('Event: file-open');
-				setTimeout(updateViewModeClass, 100);
+				scheduleViewModeUpdate();
 			})
 		);
 
@@ -138,12 +150,13 @@ export class StylingManager {
 
 		this.log('Disabling Source Mode Styling');
 
-		// Remove class from all editors
-		const editors = document.querySelectorAll('.markdown-source-view.mod-cm6.source-mode-raw');
-		editors.forEach(editor => {
-			editor.classList.remove('source-mode-raw');
-		});
-		this.log(`Removed source-mode-raw class from ${editors.length} editors`);
+		// Drop any pending update, so it cannot re-apply the class after teardown
+		this.scheduleViewModeUpdate?.cancel();
+		this.scheduleViewModeUpdate = undefined;
+
+		// Remove class from all editors, popout windows included
+		this.forEachEditorEl(editorEl => editorEl.classList.remove('source-mode-raw'));
+		this.log('Removed source-mode-raw class from all editors');
 
 		StyleInjector.removeAllVariables();
 		this.log('Removed all CSS variables');
