@@ -20,8 +20,21 @@ If your plugin does not need CSS, delete this file.
 	font-weight: var(--sourcemode-font-weight);
 }
 
+/* Flatten heading sizes on the header line, not the heading span.
+   Obsidian core sizes the line (.HyperMD-header-1 { font-size: var(--h1-size) },
+   specificity 0,1,0, no !important) and then has
+   .HyperMD-header .cm-header-N { font-size: inherit !important } carry that size
+   down to the span. Overriding the line lets core's own rule do the rest, so this
+   wins on specificity (0,4,0) with no !important of our own. Headings then follow
+   --sourcemode-font-size instead of being pinned to a fixed size. */
+.markdown-source-view.mod-cm6.source-mode-raw .HyperMD-header {
+	font-size: inherit;
+}
+
 .markdown-source-view.mod-cm6.source-mode-raw .cm-header {
-	font-size: initial !important;
+	/* Covers headings on a list line, which core sizes via
+	   .HyperMD-list-line .cm-header-N (0,2,0) rather than the line itself */
+	font-size: inherit;
 	font-weight: bold;
 	text-decoration: none;
 	text-transform: unset;

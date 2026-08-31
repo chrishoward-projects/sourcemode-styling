@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.34] - 2026-09-01
+
+### Fixed
+- Headings in source mode now follow the configured source mode font size instead of being pinned to a fixed size
+
+### Changed
+- Removed the last !important from the stylesheet by overriding the heading line rather than the heading span, which wins on specificity alone
+
 ## [0.2.33] - 2026-09-01
 
 ### Fixed
