@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.32] - 2026-08-31
+
+### Fixed
+- Font detection now scopes its test CSS variable to the test element instead of the document root, so detection works when the settings tab is open in a popout window
+- Font detection falls back to the active window's body rather than the main window's
+
+### Changed
+- Removed the unused synchronous font detection function, which duplicated the async version
+- Use Obsidian's global sleep() to yield between font detection chunks instead of a bare setTimeout
+- Use Obsidian DOM helpers (createSpan, createEl) in font detection and settings inputs
+- Declare Obsidian globals in the ESLint config
+
+### Documentation
+- Corrected the GitHub Releases link in README, which pointed at a different repository
+
 ## [0.2.31] - 2026-01-25
 
 - bump version to fix release mismatch

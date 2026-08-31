@@ -25,7 +25,7 @@ Source Mode Styling enhances Obsidian's source mode editor by applying monospace
 
 ### Manual Installation
 
-1. Download the latest release from [GitHub Releases](https://github.com/chrishoward/sourcemode-styling/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/chrishoward-projects/sourcemode-styling/releases)
 2. Extract the files to your vault's `.obsidian/plugins/sourcemode-styling/` directory
 3. Reload Obsidian or restart the application
 4. Enable the plugin in Settings → Community plugins

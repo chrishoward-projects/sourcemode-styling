@@ -21,6 +21,13 @@ export default tseslint.config(
 				clearInterval: "readonly",
 				requestAnimationFrame: "readonly",
 				cancelAnimationFrame: "readonly",
+				// Obsidian globals (declared in obsidian.d.ts)
+				activeDocument: "readonly",
+				activeWindow: "readonly",
+				sleep: "readonly",
+				createEl: "readonly",
+				createDiv: "readonly",
+				createSpan: "readonly",
 				// Node globals (for build scripts)
 				process: "readonly",
 				__dirname: "readonly",

@@ -47,8 +47,7 @@ export abstract class BaseSetting {
 		dropdown.value = isCustom ? 'custom' : currentValue.toString();
 
 		if (this.config.inputType) {
-			const input = this.createInput(isCustom, currentValue);
-			setting.controlEl.appendChild(input);
+			const input = this.createInput(setting.controlEl, isCustom, currentValue);
 			this.attachDropdownListeners(dropdown, input);
 		} else {
 			dropdown.addEventListener('change', () => {
@@ -61,13 +60,12 @@ export abstract class BaseSetting {
 	}
 
 	private createSimpleInput(setting: Setting): void {
-		const input = this.createInput(true, this.getSettingValue());
-		setting.controlEl.appendChild(input);
+		const input = this.createInput(setting.controlEl, true, this.getSettingValue());
 		this.attachInputListeners(input);
 	}
 
-	private createInput(isVisible: boolean, value: string | number): HTMLInputElement {
-		const input = document.createElement('input');
+	private createInput(parentEl: HTMLElement, isVisible: boolean, value: string | number): HTMLInputElement {
+		const input = parentEl.createEl('input');
 		input.type = this.config.inputType || 'text';
 		
 		// For color inputs, use default color if value is 'theme'
