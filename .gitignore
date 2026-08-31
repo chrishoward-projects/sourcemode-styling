@@ -24,3 +24,8 @@ data.json
 # Development tools
 .claude/
 .editorconfig
+
+# Working notes - not part of the plugin
+plans/
+exports/
+daily_reports/
