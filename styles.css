@@ -11,7 +11,13 @@ If your plugin does not need CSS, delete this file.
    NOTE: In rare cases, font settings in appearance.json may override these variables.
    If fonts aren't applying despite CSS variables being set, check appearance.json
    for textFontFamily/monospaceFontFamily settings. See CLAUDE.md troubleshooting section. */
-.markdown-source-view.mod-cm6.source-mode-raw .cm-scroller {
+/* The leading `body` is load-bearing. Minimal ships
+   .view-content>.markdown-source-view.mod-cm6 .cm-scroller{font-family:var(--font-editor)}
+   which ties this rule exactly at (0,4,0), and a tie is settled by load order -
+   theme CSS loads after plugin CSS, so the theme won and the configured font was
+   ignored. `body` adds a type selector, making this (0,4,1), which outranks the
+   tie without needing !important. */
+body .markdown-source-view.mod-cm6.source-mode-raw .cm-scroller {
 	font-family: var(--sourcemode-font-family);
 	font-size: var(--sourcemode-font-size);
 	line-height: var(--sourcemode-line-height);
