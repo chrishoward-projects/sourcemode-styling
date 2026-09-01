@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.36] - 2026-09-01
+
+### Changed
+- Upgraded eslint-plugin-obsidianmd to 0.4.2, clearing the transitive dependency vulnerabilities reported against the lint tooling
+- Pinned the obsidian API typings to 1.8.7 instead of tracking latest, so the declared minimum app version cannot be outgrown by accident
+
 ## [0.2.35] - 2026-09-01
 
 ### Fixed
