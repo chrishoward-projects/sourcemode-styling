@@ -11,7 +11,7 @@ export class StylingManager {
 	private isEnabled = false;
 
 	// Callback functions
-	private updateInjectedStyle?: () => void;
+	private refreshStyling?: () => void;
 	private scheduleViewModeUpdate?: Debouncer<[], void>;
 
 	constructor(app: App, plugin: Plugin, settings: SourceModeStylingSettings) {
@@ -32,7 +32,7 @@ export class StylingManager {
 	 * Walking the workspace rather than querying a document covers popout windows,
 	 * which a document-scoped query would miss.
 	 */
-	private forEachEditorEl(callback: (editorEl: Element, view: MarkdownView, index: number) => void): void {
+	private forEachEditorEl(callback: (editorEl: HTMLElement, view: MarkdownView, index: number) => void): void {
 		const leaves = this.app.workspace.getLeavesOfType('markdown');
 		this.log(`Found ${leaves.length} markdown leaves`);
 
@@ -43,7 +43,7 @@ export class StylingManager {
 				return;
 			}
 
-			const editorEl = view.containerEl.querySelector('.markdown-source-view.mod-cm6');
+			const editorEl = view.containerEl.querySelector<HTMLElement>('.markdown-source-view.mod-cm6');
 			if (!editorEl) {
 				this.log(`Leaf ${index}: no editor element found`);
 				return;
@@ -62,9 +62,9 @@ export class StylingManager {
 		});
 		this.settings = settings;
 		// Trigger update if styling is currently enabled
-		if (this.isEnabled && this.updateInjectedStyle) {
+		if (this.isEnabled && this.refreshStyling) {
 			this.log('Triggering style update due to settings change');
-			this.updateInjectedStyle();
+			this.refreshStyling();
 		}
 	}
 
@@ -76,17 +76,15 @@ export class StylingManager {
 
 		this.log('Enabling Source Mode Styling');
 
-		const updateInjectedStyle = () => {
-			this.log('Updating injected style');
-			const variables = CSSGenerator.generateCSSVariables(this.settings);
-			this.log('Generated CSS variables', variables);
-			StyleInjector.setCSSVariables(variables);
-		};
-
 		const updateViewModeClass = () => {
 			this.log('Updating view mode class for all editors');
 
-			// Apply class to each editor based on its individual mode
+			const variables = CSSGenerator.generateCSSVariables(this.settings);
+			this.log('Generated CSS variables', variables);
+
+			// Apply class and variables to each editor based on its individual mode.
+			// The variables go on the editor element, not the document root, so they
+			// also resolve for editors living in a popout window.
 			this.forEachEditorEl((editorEl, view, index) => {
 				const state = view.getState();
 				const isSourceMode = state.source === true && state.mode === "source";
@@ -97,9 +95,13 @@ export class StylingManager {
 				});
 
 				editorEl.classList.toggle('source-mode-raw', isSourceMode);
-			});
 
-			updateInjectedStyle();
+				if (isSourceMode) {
+					StyleInjector.setCSSVariables(editorEl, variables);
+				} else {
+					StyleInjector.removeAllVariables(editorEl);
+				}
+			});
 		};
 
 		// One debounced update shared by all three events, which commonly fire together
@@ -109,7 +111,7 @@ export class StylingManager {
 		const scheduleViewModeUpdate = debounce(updateViewModeClass, 100, false);
 		this.scheduleViewModeUpdate = scheduleViewModeUpdate;
 
-		this.updateInjectedStyle = updateInjectedStyle;
+		this.refreshStyling = updateViewModeClass;
 
 		// Register workspace event listeners using plugin.registerEvent() for proper lifecycle management
 		this.plugin.registerEvent(
@@ -154,15 +156,15 @@ export class StylingManager {
 		this.scheduleViewModeUpdate?.cancel();
 		this.scheduleViewModeUpdate = undefined;
 
-		// Remove class from all editors, popout windows included
-		this.forEachEditorEl(editorEl => editorEl.classList.remove('source-mode-raw'));
-		this.log('Removed source-mode-raw class from all editors');
-
-		StyleInjector.removeAllVariables();
-		this.log('Removed all CSS variables');
+		// Remove class and variables from all editors, popout windows included
+		this.forEachEditorEl(editorEl => {
+			editorEl.classList.remove('source-mode-raw');
+			StyleInjector.removeAllVariables(editorEl);
+		});
+		this.log('Removed source-mode-raw class and CSS variables from all editors');
 
 		// Reset callback
-		this.updateInjectedStyle = undefined;
+		this.refreshStyling = undefined;
 
 		this.isEnabled = false;
 	}

@@ -1,6 +1,10 @@
 import type { CSSVariables } from './CSSGenerator';
 
 export class StyleInjector {
+	/**
+	 * Names of every variable we have ever set. Used to clear them again, since the
+	 * value object only tells us what is currently set, not what was set before.
+	 */
 	private static appliedVariables: Set<string> = new Set();
 	private static debugMode = false;
 
@@ -14,45 +18,31 @@ export class StyleInjector {
 		}
 	}
 
-	static setCSSVariables(variables: CSSVariables): void {
-		const root = document.documentElement;
+	/**
+	 * Applies the variables to a single editor element.
+	 * They go on the element rather than the document root so they resolve inside
+	 * popout windows, which are separate documents and cannot see the main window's
+	 * root. The stylesheet reads them from .cm-scroller, which inherits from here.
+	 */
+	static setCSSVariables(el: HTMLElement, variables: CSSVariables): void {
 		this.log('Setting CSS variables', variables);
 
-		const applied: string[] = [];
-		const removed: string[] = [];
-
-		// Apply or update CSS variables
 		for (const [name, value] of Object.entries(variables)) {
 			if (value !== null) {
-				root.style.setProperty(name, value);
+				el.style.setProperty(name, value);
 				this.appliedVariables.add(name);
-				applied.push(`${name}: ${value}`);
 			} else {
 				// Remove the variable if it's set to null (revert to theme default)
-				root.style.removeProperty(name);
-				this.appliedVariables.delete(name);
-				removed.push(name);
+				el.style.removeProperty(name);
 			}
-		}
-
-		if (applied.length > 0) {
-			this.log('Applied variables', applied);
-		}
-		if (removed.length > 0) {
-			this.log('Removed variables', removed);
 		}
 	}
 
-	static removeAllVariables(): void {
-		const root = document.documentElement;
-
+	static removeAllVariables(el: HTMLElement): void {
 		this.log('Removing all CSS variables', Array.from(this.appliedVariables));
 
-		// Remove all CSS variables we've applied
 		for (const name of this.appliedVariables) {
-			root.style.removeProperty(name);
+			el.style.removeProperty(name);
 		}
-
-		this.appliedVariables.clear();
 	}
 }

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-03
+
+### Fixed
+- Source mode styling now applies in popout windows. The styling variables were set on the main window's document root, which a popout window cannot see, so its editors were left unstyled even though they were correctly marked as being in source mode.
+
+### Changed
+- Styling variables are applied per editor rather than globally, and are cleared from an editor when it leaves source mode
+
 ## [0.2.36] - 2026-09-01
 
 ### Changed
