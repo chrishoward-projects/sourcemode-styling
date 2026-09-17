@@ -10,3 +10,9 @@ export const MONOSPACE_FONTS = [
 	"Red Hat Mono", "Roboto Mono", "Source Code Pro", "Space Mono", 
 	"Ubuntu Mono", "Ubuntu Sans Mono", "VT323", "monospace"
 ];
+/**
+ * Minimum Obsidian version the next release will require. Users below this are
+ * told once that the current version is the last one they will be offered,
+ * since versions.json keeps serving them this build rather than newer ones.
+ */
+export const NEXT_RELEASE_MIN_APP_VERSION = "1.13.0";
